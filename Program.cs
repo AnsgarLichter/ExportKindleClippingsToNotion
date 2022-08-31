@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Globalization;
+
 
 using Notion.Client;
 
@@ -34,20 +34,12 @@ try
         }
     );
     var database = await client.Databases.RetrieveAsync(config.NotionDatabaseId);
-}
-catch (NotionApiException notionApiException)
-{
-    Console.WriteLine($"An error occurred communicating with notion: {notionApiException}");
-}
 
-
-try
-{
     String clippingsText = File.ReadAllText(pathToClippings);
 
     String[] clippings = clippingsText.Split("==========\r\n"); //TODO: Is \n and \n really necessary? Can I exclude these signs from the parsed file?
     Console.WriteLine($"Determined {clippings.Length} clippings");
-    
+
     //TODO: Save Regex in a config object to get regex in dependence of config's language
     var regexAuthor = "(?<=\\()(?!.+?\\()(.+?)(?=\\))";
     var regexTitle = ".+?(?=\\s*\\()";
@@ -78,9 +70,7 @@ try
         var finishPosition = Regex.Match(linePagePositionDate, regexFinishPosition).Value;
         var date = Regex.Match(linePagePositionDate, regexDate).Value;
 
-        //TODO: Use config's language
-        var cultureInfo = new CultureInfo("de-DE");
-        var dateTime = DateTime.Parse(date, cultureInfo);
+        var dateTime = DateTime.Parse(date, config.Language);
 
         var text = lines[3];
         if (Regex.IsMatch(text, regexClippingsLimitReached))
@@ -114,85 +104,16 @@ try
 
     Console.WriteLine($"Paresed {books.Count} books");
     Console.WriteLine($"Paresed {parsedClippings.Count} clippings");
+
+    //TODO: Upload clippings
+    
+}
+catch (NotionApiException notionApiException)
+{
+    Console.WriteLine($"An error occurred communicating with notion: {notionApiException}");
 }
 catch (IOException ioException)
 {
     Console.WriteLine($"An error occurred reading the clippings file: {ioException}");
 }
 
-//TODO: Parse clippings
-
-
-//TODO: Upload clippings
-
-
-public class Config
-{
-    public String? NotionAuthenticationToken { get; set; }
-    public String? NotionDatabaseId { get; set; }
-}
-
-public class Book
-{
-    public String? Author { get; set; }
-    public String? Title { get; set; }
-    public String? LastSynchronized { get; set; }
-    public int? Highlights { get; set; }
-    public List<Clipping> clippings { get; set; } = new List<Clipping>();
-
-    public Book(String author, String title)
-    {
-        this.Author = author;
-        this.Title = title;
-    }
-
-    public void AddClipping(Clipping clipping)
-    {
-        if (clippings.Contains(clipping))
-        {
-            return;
-        }
-
-        clippings.Add(clipping);
-    }
-
-    public override bool Equals(object? obj)
-    {
-        if (obj == null || GetType() != obj.GetType())
-        {
-            return false;
-        }
-
-        Book book = (Book)obj;
-        return book.Author == this.Author && book.Title == this.Title;
-    }
-
-    public override int GetHashCode()
-    {
-        return (Author, Title).GetHashCode(); ;
-    }
-
-    public override string ToString()
-    {
-        return $"{this.Title} ({this.Author})";
-    }
-}
-
-public class Clipping
-{
-    public String? Text { get; set; }
-    public int PositionStart { get; set; }
-    public int PositionEnd { get; set; }
-    public int Page { get; set; }
-    public DateTime HighlightDate { get; set; }
-    public Book? Book { get; set; }
-
-    public Clipping(String text, int positionStart, int positionEnd, int page, DateTime highlightDate)
-    {
-        this.Text = text;
-        this.PositionStart = positionStart;
-        this.PositionEnd = positionEnd;
-        this.Page = page;
-        this.HighlightDate = highlightDate;
-    }
-}
