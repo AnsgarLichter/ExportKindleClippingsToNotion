@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportKindleClippingsToNotion", "ExportKindleClippingsToNotion\ExportKindleClippingsToNotion.csproj", "{0A4CBE39-1C71-4543-8D2F-927F28C77B80}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExportKindleClippingsToNotion.Tests", "ExportKindleClippingsToNotion.Tests\ExportKindleClippingsToNotion.Tests.csproj", "{8BBE6080-DFDE-48D1-A408-DA5972A29AE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{0A4CBE39-1C71-4543-8D2F-927F28C77B80}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A4CBE39-1C71-4543-8D2F-927F28C77B80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A4CBE39-1C71-4543-8D2F-927F28C77B80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BBE6080-DFDE-48D1-A408-DA5972A29AE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BBE6080-DFDE-48D1-A408-DA5972A29AE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BBE6080-DFDE-48D1-A408-DA5972A29AE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BBE6080-DFDE-48D1-A408-DA5972A29AE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
