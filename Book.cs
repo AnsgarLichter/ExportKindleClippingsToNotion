@@ -2,9 +2,13 @@ public class Book
 {
     public string? Author { get; set; }
     public string? Title { get; set; }
-    public string? LastSynchronized { get; set; }
+
+    public string? Thumbnail { get; set; }
+
+    public string Emoji { get; set; } = "📖";
+    public DateTime? LastSynchronized { get; set; }
     public int? Highlights { get; set; }
-    public List<Clipping> clippings { get; set; } = new List<Clipping>();
+    public List<Clipping> Clippings { get; set; } = new List<Clipping>();
 
     public Book(string author, string title)
     {
@@ -14,12 +18,12 @@ public class Book
 
     public void AddClipping(Clipping clipping)
     {
-        if (clippings.Contains(clipping))
+        if (Clippings.Contains(clipping))
         {
             return;
         }
 
-        clippings.Add(clipping);
+        Clippings.Add(clipping);
     }
 
     public override bool Equals(object? obj)

@@ -1,9 +1,13 @@
 ﻿using System.Text.Json;
 using System.Text.RegularExpressions;
 
+using System.Globalization;
 
 using Notion.Client;
+using Google.Apis.Books.v1;
+using Google.Apis.Services;
 
+//TODO: Implement logger instead of Console.WriteLine
 if (args.Length == 0)
 {
     Console.WriteLine("Please provide a path to your clippings file");
@@ -13,15 +17,20 @@ if (args.Length == 0)
 var pathToClippings = args[0];
 if (!File.Exists(pathToClippings))
 {
-    Console.WriteLine($"Clippings File doesn't exist. Please check your path {pathToClippings}");
+    Console.WriteLine($"Clippings File doesn't exist. Please check your path '{pathToClippings}'");
+    return;
 }
 
-String configJson = File.ReadAllText("./params.json");
-Config? config = JsonSerializer.Deserialize<Config>(configJson);
-
-if (config is null || string.IsNullOrEmpty(config.NotionAuthenticationToken) || string.IsNullOrEmpty(config.NotionDatabaseId))
+//TODO: Move into config class - validate while instantiation
+//TODO: Handle no config found and all other exceptions
+//TODO: Constant for path to config file
+Config? config = JsonSerializer.Deserialize<Config>(File.ReadAllText("./params.json"));
+if (config is null
+    || string.IsNullOrEmpty(config.NotionAuthenticationToken)
+    || string.IsNullOrEmpty(config.NotionDatabaseId)
+    || string.IsNullOrEmpty(config.Language))
 {
-    Console.WriteLine("Please provide your authentication token and your database id in the params file");
+    Console.WriteLine("Please provide your authentication token, your database id and your language in the config file");
     return;
 }
 
@@ -35,9 +44,11 @@ try
     );
     var database = await client.Databases.RetrieveAsync(config.NotionDatabaseId);
 
+    //TODO: Check Stimmlers implementation
     String clippingsText = File.ReadAllText(pathToClippings);
-
-    String[] clippings = clippingsText.Split("==========\r\n"); //TODO: Is \n and \n really necessary? Can I exclude these signs from the parsed file?
+    //TODO: Is \n and \n really necessary? Can I exclude these signs from the parsed file?
+    String[] clippings = clippingsText.Split($"==========\r\n");
+    //TODO: Use logger in real architecture
     Console.WriteLine($"Determined {clippings.Length} clippings");
 
     //TODO: Save Regex in a config object to get regex in dependence of config's language
@@ -70,7 +81,7 @@ try
         var finishPosition = Regex.Match(linePagePositionDate, regexFinishPosition).Value;
         var date = Regex.Match(linePagePositionDate, regexDate).Value;
 
-        var dateTime = DateTime.Parse(date, config.Language);
+        var dateTime = DateTime.Parse(date, new CultureInfo(config.Language));
 
         var text = lines[3];
         if (Regex.IsMatch(text, regexClippingsLimitReached))
@@ -102,11 +113,27 @@ try
         parsedClippings.Add(parsedClipping);
     }
 
-    Console.WriteLine($"Paresed {books.Count} books");
-    Console.WriteLine($"Paresed {parsedClippings.Count} clippings");
+    Console.WriteLine($"Parsed {books.Count} books");
+    Console.WriteLine($"Parsed {parsedClippings.Count} clippings");
 
-    //TODO: Upload clippings
-    
+
+    var httpClient = new HttpClient()
+    {
+        BaseAddress = new Uri("https://www.googleapis.com/books/v1/volumes") //TODO: Move into config
+    };
+
+    //TODO: Extract
+    var booksService = new BooksService(new BaseClientService.Initializer());
+    foreach (var book in books)
+    {
+        var volumes = await booksService.Volumes.List($"intitle:{book.Title}+inauthor:{book.Author}").ExecuteAsync();
+        var item = volumes.Items[0];
+        book.Thumbnail = item.VolumeInfo.ImageLinks.Thumbnail;
+    }
+
+    //TODO: Add Exporter which uses the NotionExporter as client (NotionClient), then notion client can also  be used by other class to import book thumbnail
+    var exporter = new NotionExporter(config.NotionAuthenticationToken, config.NotionDatabaseId);
+    exporter.export(books);
 }
 catch (NotionApiException notionApiException)
 {

@@ -1,14 +1,12 @@
-using System.Globalization;
-
 public class Config
 {
     public string NotionAuthenticationToken { get; set; }
     public string NotionDatabaseId { get; set; }
-    public CultureInfo Language { get; set; }
+    public string Language { get; set; }
 
-    public Config (string NotionAuthenticationToken, string NotionDatabaseId, CultureInfo Language) {
-        this.NotionAuthenticationToken = NotionAuthenticationToken;
-        this.NotionDatabaseId = NotionDatabaseId;
-        this.Language = Language;
+    public Config (string notionAuthenticationToken, string notionDatabaseId, string language) {
+        this.NotionAuthenticationToken = notionAuthenticationToken;
+        this.NotionDatabaseId = notionDatabaseId;
+        this.Language = language;
     }
 }
