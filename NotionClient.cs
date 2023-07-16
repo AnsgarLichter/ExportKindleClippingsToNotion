@@ -28,43 +28,22 @@ class NotionClient : IExportClient, IImportClient
 
     public Task<PaginatedList<Page>> query(Book book)
     {
-        try
-        {
-            return client.Databases.QueryAsync(
-                       this.databaseId,
-                       new DatabasesQueryParameters
-                       {
-                           Filter = new TitleFilter("Title", equal: book.Title)
-                       }
-            );
-        }
-        catch (NotionApiException notionApiException)
-        {
-            Console.WriteLine($"An error occurred communicating with notion: {notionApiException}");
-            return null;
-        }
+        return client.Databases.QueryAsync(
+                   this.databaseId,
+                   new DatabasesQueryParameters
+                   {
+                       Filter = new TitleFilter("Title", equal: book.Title)
+                   }
+        );
     }
 
     public async void export(List<Book> books)
     {
         foreach (var book in books)
         {
-            try
-            {
-                Console.WriteLine($"Start test");
-                var test = await client.Databases.QueryAsync(
-                           this.databaseId,
-                           new DatabasesQueryParameters
-                           {
-                               Filter = new TitleFilter("Title", equal: book.Title)
-                           }
-                );
-            } catch (NotionApiException notionApiException)
-            {
-                Console.WriteLine($"An error occurred communicating with notion: {notionApiException}");
-                return;
-            }
-            var pages = await this.query(book);
+            var task = this.query(book);
+            task.Wait();
+            var pages = task.Result;
             Console.WriteLine($"Found {pages.Results.Count}");
 
             if (pages.Results.Any())
@@ -85,13 +64,21 @@ class NotionClient : IExportClient, IImportClient
         this.addClippings(book, builder);
 
         //TODO: Call notion client & validate result
-        var result = await client.Pages.CreateAsync(builder.Build());
+        var task = client.Pages.CreateAsync(builder.Build());
+        task.Wait();
+        var page = task.Result;
 
-        Console.WriteLine($"Created page for book {book.Author}");
+        if (page == null || page.Id == null)
+        {
+            Console.WriteLine($"Couldn't create page for book {book.Title} by {book.Author}");    
+        }
+        Console.WriteLine($"Created page for book {book.Title} by {book.Author}");
     }
 
     private PagesCreateParametersBuilder getBuilder(Book book)
     {
+        book.LastSynchronized = DateTime.Now;
+
         return PagesCreateParametersBuilder.Create(
                 new DatabaseParentInput
                 {

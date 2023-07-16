@@ -36,13 +36,8 @@ if (config is null
 
 try
 {
-    var client = NotionClientFactory.Create(
-        new ClientOptions
-        {
-            AuthToken = config.NotionAuthenticationToken
-        }
-    );
-    var database = await client.Databases.RetrieveAsync(config.NotionDatabaseId);
+    var client = new NotionClient(config.NotionAuthenticationToken, config.NotionDatabaseId);
+    var exporter = new Exporter(client);
 
     //TODO: Check Stimmlers implementation
     String clippingsText = File.ReadAllText(pathToClippings);
@@ -130,6 +125,7 @@ try
 
         if (volumes.Items == null || volumes.Items.Count == 0)
         {
+            //TODO: Use fallback image because Thumbnail is mandatory
             continue;
         }
 
@@ -137,8 +133,6 @@ try
         book.Thumbnail = item.VolumeInfo.ImageLinks.Thumbnail;
     }
 
-    var notionClient = new NotionClient(config.NotionAuthenticationToken, config.NotionDatabaseId);
-    var exporter = new Exporter(notionClient);
     exporter.export(books);
 }
 catch (NotionApiException notionApiException)
