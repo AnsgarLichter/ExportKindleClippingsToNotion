@@ -1,4 +1,4 @@
-﻿﻿Patterns of enterprise application architecture-Addison-Wesley (2015) (Fowler, Martin)
+﻿﻿Patterns of enterprise application architecture (2015) (Fowler, Martin)
 - Ihre Markierung bei Position 986-987 | Hinzugefügt am Mittwoch, 14. Juli 2021 19:06:11
 
 corresponds pretty closely to the database structure, with one domain class per database table. Such domain objects often have only moderately complex business logic.
