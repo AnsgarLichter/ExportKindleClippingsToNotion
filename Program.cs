@@ -127,12 +127,18 @@ try
     foreach (var book in books)
     {
         var volumes = await booksService.Volumes.List($"intitle:{book.Title}+inauthor:{book.Author}").ExecuteAsync();
+
+        if (volumes.Items == null || volumes.Items.Count == 0)
+        {
+            continue;
+        }
+
         var item = volumes.Items[0];
         book.Thumbnail = item.VolumeInfo.ImageLinks.Thumbnail;
     }
 
-    //TODO: Add Exporter which uses the NotionExporter as client (NotionClient), then notion client can also  be used by other class to import book thumbnail
-    var exporter = new NotionExporter(config.NotionAuthenticationToken, config.NotionDatabaseId);
+    var notionClient = new NotionClient(config.NotionAuthenticationToken, config.NotionDatabaseId);
+    var exporter = new Exporter(notionClient);
     exporter.export(books);
 }
 catch (NotionApiException notionApiException)

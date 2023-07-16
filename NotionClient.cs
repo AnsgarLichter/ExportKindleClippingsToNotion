@@ -1,24 +1,15 @@
 //TODO: DI?
 using Notion.Client;
 
-//TODO: Return values depend on notion client
-interface IExporter
+class NotionClient : IExportClient, IImportClient
 {
-    //TODO: Book interface
-    Task<PaginatedList<Page>> query(Book book);
-
-    void export(List<Book> books);
-}
-
-class NotionExporter : IExporter
-{
-    private readonly NotionClient client;
+    private readonly Notion.Client.NotionClient client;
 
     private string authenticationToken;
 
     private readonly string databaseId;
 
-    public NotionExporter(string AuthenticationToken, string databaseId)
+    public NotionClient(string AuthenticationToken, string databaseId)
     {
         this.authenticationToken = AuthenticationToken;
         this.databaseId = databaseId;
@@ -37,32 +28,71 @@ class NotionExporter : IExporter
 
     public Task<PaginatedList<Page>> query(Book book)
     {
-        return client.Databases.QueryAsync(
-            this.databaseId,
-            new DatabasesQueryParameters
-            {
-                //TODO: Constant for title value
-                //TODO: Filter author?
-                Filter = new TitleFilter("Title", equal: book.Title)
-            }
-        );
+        try
+        {
+            return client.Databases.QueryAsync(
+                       this.databaseId,
+                       new DatabasesQueryParameters
+                       {
+                           Filter = new TitleFilter("Title", equal: book.Title)
+                       }
+            );
+        }
+        catch (NotionApiException notionApiException)
+        {
+            Console.WriteLine($"An error occurred communicating with notion: {notionApiException}");
+            return null;
+        }
     }
 
     public async void export(List<Book> books)
     {
         foreach (var book in books)
         {
+            try
+            {
+                Console.WriteLine($"Start test");
+                var test = await client.Databases.QueryAsync(
+                           this.databaseId,
+                           new DatabasesQueryParameters
+                           {
+                               Filter = new TitleFilter("Title", equal: book.Title)
+                           }
+                );
+            } catch (NotionApiException notionApiException)
+            {
+                Console.WriteLine($"An error occurred communicating with notion: {notionApiException}");
+                return;
+            }
             var pages = await this.query(book);
             Console.WriteLine($"Found {pages.Results.Count}");
 
             if (pages.Results.Any())
             {
-                //TODO: Update the page's content with the current clippings
-                Console.WriteLine($"Book has already been synced. Therefore it's going to be updated.");
+                this.updateBook(book);
                 continue;
             }
 
-            var builder = PagesCreateParametersBuilder.Create(
+            this.createBook(book);
+        }
+
+        Console.WriteLine($"Export finished!");
+    }
+
+    private async void createBook(Book book)
+    {
+        PagesCreateParametersBuilder builder = this.getBuilder(book);
+        this.addClippings(book, builder);
+
+        //TODO: Call notion client & validate result
+        var result = await client.Pages.CreateAsync(builder.Build());
+
+        Console.WriteLine($"Created page for book {book.Author}");
+    }
+
+    private PagesCreateParametersBuilder getBuilder(Book book)
+    {
+        return PagesCreateParametersBuilder.Create(
                 new DatabaseParentInput
                 {
                     DatabaseId = this.databaseId
@@ -120,17 +150,20 @@ class NotionExporter : IExporter
                     }
                 }
             );
+    }
 
-            foreach (var clipping in book.Clippings)
-            {
-                //TODO: Improve UI of the found clippings - use a table?
-                builder.AddPageContent(
-                    new BulletedListItemBlock()
+    private void addClippings(Book book, PagesCreateParametersBuilder builder)
+    {
+        foreach (var clipping in book.Clippings)
+        {
+            //TODO: Improve UI of the found clippings - use a table?
+            builder.AddPageContent(
+                new BulletedListItemBlock()
+                {
+                    BulletedListItem = new BulletedListItemBlock.Info
                     {
-                        BulletedListItem = new BulletedListItemBlock.Info
+                        RichText = new List<RichTextBase>
                         {
-                            RichText = new List<RichTextBase>
-                            {
                             new RichTextText
                             {
                                 Text = new Text
@@ -138,16 +171,18 @@ class NotionExporter : IExporter
                                     Content = $"{clipping.Text} (at Page {clipping.Page})"
                                 }
                             }
-                            }
                         }
                     }
-                );
-            }
-
-            //TODO: Call notion client & validate result
-            var result = await client.Pages.CreateAsync(builder.Build());
-
-            Console.WriteLine($"Created page for book {book.Author}");
+                }
+            );
         }
+    }
+
+    private async void updateBook(Book book)
+    {
+        Console.WriteLine($"Book has already been synced. Therefore it's going to be updated.");
+
+        //TODO: Update Book's properties and clippings in Notion
+        return;
     }
 }
