@@ -1,25 +1,27 @@
-interface IExporter
+namespace ExportKindleClippingsToNotion;
+
+internal interface IExporter
 {
-    void export(List<Book> books);
+    void Export(List<Book> books);
 }
 
 interface IExportClient
 {
-    void export(List<Book> books);
+    void Export(List<Book> books);
 }
 
-class Exporter : IExporter
+internal class Exporter : IExporter
 {
-    private readonly IExportClient client;
+    private readonly IExportClient _client;
 
     public Exporter(IExportClient client)
     {
-        this.client = client;
+        this._client = client;
     }
 
-    public void export(List<Book> books)
+    public void Export(List<Book> books)
     {
         Console.WriteLine($"Starting export.");
-        this.client.export(books);
+        this._client.Export(books);
     }
 }

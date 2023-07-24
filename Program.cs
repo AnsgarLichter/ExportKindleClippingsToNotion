@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
 using System.Text.RegularExpressions;
-
 using System.Globalization;
-
+using ExportKindleClippingsToNotion;
 using Notion.Client;
 using Google.Apis.Books.v1;
 using Google.Apis.Services;
+using NotionClient = ExportKindleClippingsToNotion.NotionClient;
 
 //TODO: Implement logger instead of Console.WriteLine
 if (args.Length == 0)
@@ -24,13 +24,14 @@ if (!File.Exists(pathToClippings))
 //TODO: Move into config class - validate while instantiation
 //TODO: Handle no config found and all other exceptions
 //TODO: Constant for path to config file
-Config? config = JsonSerializer.Deserialize<Config>(File.ReadAllText("./params.json"));
+var config = JsonSerializer.Deserialize<Config>(File.ReadAllText("./params.json"));
 if (config is null
     || string.IsNullOrEmpty(config.NotionAuthenticationToken)
     || string.IsNullOrEmpty(config.NotionDatabaseId)
     || string.IsNullOrEmpty(config.Language))
 {
-    Console.WriteLine("Please provide your authentication token, your database id and your language in the config file");
+    Console.WriteLine(
+        "Please provide your authentication token, your database id and your language in the config file");
     return;
 }
 
@@ -85,7 +86,8 @@ try
             continue;
         }
 
-        Console.WriteLine($"{title} by {author}: Page {page} at position from {startPosition} to {finishPosition} created at {dateTime} - {text}");
+        Console.WriteLine(
+            $"{title} by {author}: Page {page} at position from {startPosition} to {finishPosition} created at {dateTime} - {text}");
 
         Clipping parsedClipping = new Clipping(
             text,
@@ -111,12 +113,6 @@ try
     Console.WriteLine($"Parsed {books.Count} books");
     Console.WriteLine($"Parsed {parsedClippings.Count} clippings");
 
-
-    var httpClient = new HttpClient()
-    {
-        BaseAddress = new Uri("https://www.googleapis.com/books/v1/volumes") //TODO: Move into config
-    };
-
     //TODO: Extract
     var booksService = new BooksService(new BaseClientService.Initializer());
     foreach (var book in books)
@@ -133,7 +129,7 @@ try
         book.Thumbnail = item.VolumeInfo.ImageLinks.Thumbnail;
     }
 
-    exporter.export(books);
+    exporter.Export(books);
 }
 catch (NotionApiException notionApiException)
 {
@@ -143,4 +139,3 @@ catch (IOException ioException)
 {
     Console.WriteLine($"An error occurred reading the clippings file: {ioException}");
 }
-

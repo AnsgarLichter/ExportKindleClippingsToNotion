@@ -1,3 +1,5 @@
+namespace ExportKindleClippingsToNotion;
+
 public class Book
 {
     public string? Author { get; set; }

@@ -1,7 +1,8 @@
 using Notion.Client;
 
-interface IImportClient
-{
-    Task<PaginatedList<Page>> query(Book book);
+namespace ExportKindleClippingsToNotion;
 
+internal interface IImportClient
+{
+    Task<PaginatedList<Page>> Query(Book book);
 }

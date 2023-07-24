@@ -1,3 +1,5 @@
+namespace ExportKindleClippingsToNotion;
+
 public class Clipping
 {
     public string? Text { get; set; }
@@ -24,10 +26,10 @@ public class Clipping
         }
 
         Clipping clipping = (Clipping)obj;
-        return Text == clipping.Text 
-               && StartPosition == clipping.StartPosition 
-               && FinishPosition == clipping.FinishPosition 
-               && Page == clipping.Page 
+        return Text == clipping.Text
+               && StartPosition == clipping.StartPosition
+               && FinishPosition == clipping.FinishPosition
+               && Page == clipping.Page
                && HighlightDate == clipping.HighlightDate
                && Book == clipping.Book;
     }
