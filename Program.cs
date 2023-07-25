@@ -24,7 +24,7 @@ if (!File.Exists(pathToClippings))
 //TODO: Move into config class - validate while instantiation
 //TODO: Handle no config found and all other exceptions
 //TODO: Constant for path to config file
-var config = JsonSerializer.Deserialize<Config>(File.ReadAllText("./params.json"));
+var config = JsonSerializer.Deserialize<Config>(File.ReadAllText("params.json"));
 if (config is null
     || string.IsNullOrEmpty(config.NotionAuthenticationToken)
     || string.IsNullOrEmpty(config.NotionDatabaseId)
@@ -53,6 +53,7 @@ try
     var regexPage = "(?<=Seite )[0-9]*";
     var regexStartPosition = "[0-9]+(?=-)";
     var regexFinishPosition = "(?<=-)[0-9]+";
+    //TODO: Date Regex not working in every case
     var regexDate = "\\d{2}[a-zA-Z_ .]*\\d{4}\\s*\\d{2}:\\d{2}:\\d{2}";
     var regexClippingsLimitReached = "<.+?>";
 
@@ -122,14 +123,17 @@ try
         if (volumes.Items == null || volumes.Items.Count == 0)
         {
             //TODO: Use fallback image because Thumbnail is mandatory
+            Console.WriteLine($"Use fallback cover for {book.Title}");
             continue;
         }
 
         var item = volumes.Items[0];
         book.Thumbnail = item.VolumeInfo.ImageLinks.Thumbnail;
+        
+        Console.WriteLine($"Use loaded cover for {book.Title}");
     }
 
-    exporter.Export(books);
+    await exporter.Export(books);
 }
 catch (NotionApiException notionApiException)
 {
