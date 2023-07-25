@@ -41,7 +41,6 @@ class NotionClient : IExportClient, IImportClient
     {
         foreach (var book in books)
         {
-            //TODO: Shouldn't this be checked while importing?
             var pages = await this.Query(book);
             Console.WriteLine($"Found {pages.Results.Count}");
 
