@@ -227,6 +227,7 @@ class NotionClient : IExportClient, IImportClient
             throw new Exception($"Properties of page ${page.Id} couldn't be updated.");
         }
         
+        //TODO: Only update if clippings count differs
         var children = await this._client.Blocks.RetrieveChildrenAsync(page.Id);
         foreach (var child in children.Results)
         {
