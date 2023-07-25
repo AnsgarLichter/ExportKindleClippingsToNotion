@@ -5,7 +5,7 @@ internal interface IExporter
     Task Export(List<Book> books);
 }
 
-interface IExportClient
+internal interface IExportClient
 {
     Task Export(List<Book> books);
 }

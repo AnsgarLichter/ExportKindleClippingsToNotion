@@ -41,24 +41,24 @@ try
     var exporter = new Exporter(client);
 
     //TODO: Check Stimmlers implementation
-    String clippingsText = File.ReadAllText(pathToClippings);
+    var clippingsText = File.ReadAllText(pathToClippings);
     //TODO: Is \n and \n really necessary? Can I exclude these signs from the parsed file?
-    String[] clippings = clippingsText.Split($"==========\r\n");
+    var clippings = clippingsText.Split($"==========\r\n");
     //TODO: Use logger in real architecture
     Console.WriteLine($"Determined {clippings.Length} clippings");
 
     //TODO: Save Regex in a config object to get regex in dependence of config's language
-    var regexAuthor = "(?<=\\()(?!.+?\\()(.+?)(?=\\))";
-    var regexTitle = ".+?(?=\\s*\\()";
-    var regexPage = "(?<=Seite )[0-9]*";
-    var regexStartPosition = "[0-9]+(?=-)";
-    var regexFinishPosition = "(?<=-)[0-9]+";
+    const string regexAuthor = "(?<=\\()(?!.+?\\()(.+?)(?=\\))";
+    const string regexTitle = ".+?(?=\\s*\\()";
+    const string regexPage = "(?<=Seite )[0-9]*";
+    const string regexStartPosition = "[0-9]+(?=-)";
+    const string regexFinishPosition = "(?<=-)[0-9]+";
     //TODO: Date Regex not working in every case
-    var regexDate = "\\d{2}[a-zA-Z_ .]*\\d{4}\\s*\\d{2}:\\d{2}:\\d{2}";
-    var regexClippingsLimitReached = "<.+?>";
+    const string regexDate = "\\d{2}[a-zA-Z_ .]*\\d{4}\\s*\\d{2}:\\d{2}:\\d{2}";
+    const string regexClippingsLimitReached = "<.+?>";
 
-    List<Book> books = new List<Book>();
-    List<Clipping> parsedClippings = new List<Clipping>();
+    var books = new List<Book>();
+    var parsedClippings = new List<Clipping>();
     foreach (var clipping in clippings)
     {
         var lines = clipping.Split("\n");
@@ -68,9 +68,9 @@ try
             continue;
         }
 
-        var lineTilteAndAuthor = lines[0];
-        var title = Regex.Match(lineTilteAndAuthor, regexTitle).Value;
-        var author = Regex.Match(lineTilteAndAuthor, regexAuthor).Value;
+        var lineTitleAndAuthor = lines[0];
+        var title = Regex.Match(lineTitleAndAuthor, regexTitle).Value;
+        var author = Regex.Match(lineTitleAndAuthor, regexAuthor).Value;
 
         var linePagePositionDate = lines[1];
         var page = Regex.Match(linePagePositionDate, regexPage).Value;
@@ -90,11 +90,11 @@ try
         Console.WriteLine(
             $"{title} by {author}: Page {page} at position from {startPosition} to {finishPosition} created at {dateTime} - {text}");
 
-        Clipping parsedClipping = new Clipping(
+        var parsedClipping = new Clipping(
             text,
-            !string.IsNullOrEmpty(startPosition) ? Int32.Parse(startPosition) : 0,
-            !string.IsNullOrEmpty(finishPosition) ? Int32.Parse(finishPosition) : 0,
-            !string.IsNullOrEmpty(page) ? Int32.Parse(page) : 0,
+            !string.IsNullOrEmpty(startPosition) ? int.Parse(startPosition) : 0,
+            !string.IsNullOrEmpty(finishPosition) ? int.Parse(finishPosition) : 0,
+            !string.IsNullOrEmpty(page) ? int.Parse(page) : 0,
             dateTime
         );
 
