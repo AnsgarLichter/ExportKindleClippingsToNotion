@@ -1,5 +1,6 @@
 //TODO: DI?
 
+using ExportKindleClippingsToNotion.Utils;
 using Notion.Client;
 
 namespace ExportKindleClippingsToNotion;
@@ -21,7 +22,7 @@ class NotionClient : IExportClient, IImportClient
         );
     }
 
-    private Task<Database> GetDatabase()
+    public Task<Database> GetDatabase()
     {
         return _client.Databases.RetrieveAsync(this._databaseId);
     }
@@ -58,10 +59,7 @@ class NotionClient : IExportClient, IImportClient
 
     private async Task CreateBook(Book book)
     {
-        var pagesCreateParameters = this.GetCreateBuilder(book)
-            .AddPageContent(this.CreateTable(book))
-            .Build();
-        var page = await _client.Pages.CreateAsync(pagesCreateParameters);
+        var page = await _client.Pages.CreateAsync(this.GetCreateBuilder(book));
         if (page?.Id == null)
         {
             Console.WriteLine($"Couldn't create page for book {book.Title} by {book.Author}");
@@ -70,7 +68,7 @@ class NotionClient : IExportClient, IImportClient
         Console.WriteLine($"Created page for book {book.Title} by {book.Author}");
     }
 
-    private PagesCreateParametersBuilder GetCreateBuilder(Book book)
+    private PagesCreateParameters GetCreateBuilder(Book book)
     {
         book.LastSynchronized = DateTime.Now;
 
@@ -131,14 +129,16 @@ class NotionClient : IExportClient, IImportClient
                         Url = book.Thumbnail
                     }
                 }
-            );
+            )
+            .AddPageContent(this.CreateClippingsTable(book))
+            .Build();
     }
 
-    private TableBlock CreateTable(Book book)
+    private TableBlock CreateClippingsTable(Book book)
     {
         var tableRows = new List<TableRowBlock>
         {
-            new TableRowBlock()
+            new()
             {
                 TableRow = new TableRowBlock.Info()
                 {
@@ -146,7 +146,7 @@ class NotionClient : IExportClient, IImportClient
                     {
                         new List<RichTextText>()
                         {
-                            new RichTextText()
+                            new()
                             {
                                 Text = new Text()
                                 {
@@ -156,7 +156,7 @@ class NotionClient : IExportClient, IImportClient
                         },
                         new List<RichTextText>()
                         {
-                            new RichTextText()
+                            new()
                             {
                                 Text = new Text()
                                 {
@@ -166,7 +166,7 @@ class NotionClient : IExportClient, IImportClient
                         },
                         new List<RichTextText>()
                         {
-                            new RichTextText()
+                            new()
                             {
                                 Text = new Text()
                                 {
@@ -176,7 +176,7 @@ class NotionClient : IExportClient, IImportClient
                         },
                         new List<RichTextText>()
                         {
-                            new RichTextText()
+                            new()
                             {
                                 Text = new Text()
                                 {
@@ -220,17 +220,13 @@ class NotionClient : IExportClient, IImportClient
         Console.WriteLine($"Book has already been synced. Therefore it's going to be updated.");
 
         book.LastSynchronized = DateTime.Now;
-
-        var builder = GetUpdateBuilder(book, page);
-
-        var result = await _client.Pages.UpdateAsync(page.Id, builder.Build());
+        
+        var result = await _client.Pages.UpdateAsync(page.Id, GetUpdateBuilder(book, page));
         if (result?.Id == null)
         {
             throw new Exception($"Properties of page ${page.Id} couldn't be updated.");
         }
-
-        //TODO: Update Content of Page
-        //Call Blocks API with Page ID as Parent and Add new Content
+        
         var children = await this._client.Blocks.RetrieveChildrenAsync(page.Id);
         foreach (var child in children.Results)
         {
@@ -241,14 +237,14 @@ class NotionClient : IExportClient, IImportClient
             page.Id,
             new BlocksAppendChildrenParameters()
             {
-                Children = new[] { this.CreateTable(book) }
+                Children = new[] { this.CreateClippingsTable(book) }
             }
         );
     }
 
-    private static PagesUpdateParametersBuilder GetUpdateBuilder(Book book, Page page)
+    private static PagesUpdateParameters GetUpdateBuilder(Book book, Page page)
     {
-        var builder = PagesUpdateParametersBuilder.Create(page)
+        return PagesUpdateParametersBuilder.Create(page)
             .AddOrUpdateProperty("Title", new TitlePropertyValue
             {
                 Title = new List<RichTextBase>()
@@ -300,66 +296,7 @@ class NotionClient : IExportClient, IImportClient
                         Url = book.Thumbnail
                     }
                 }
-            );
-        return builder;
-    }
-}
-
-public class PagesUpdateParametersBuilder
-{
-    private Dictionary<string, PropertyValue> _properties = new();
-    private FileObject? _cover;
-    private IPageIcon? _icon;
-    private bool _isArchived;
-
-    private PagesUpdateParametersBuilder()
-    {
-    }
-
-    public static PagesUpdateParametersBuilder Create(Page page)
-    {
-        var builder = new PagesUpdateParametersBuilder()
-        {
-            _properties = (Dictionary<string, PropertyValue>)page.Properties,
-            _cover = page.Cover,
-            _icon = page.Icon,
-            _isArchived = page.IsArchived
-        };
-
-        builder._properties.Remove("Last Edited");
-
-        return builder;
-    }
-
-    public PagesUpdateParametersBuilder AddOrUpdateProperty(string nameOrId, PropertyValue value)
-    {
-        this._properties[nameOrId] = value;
-
-        return this;
-    }
-
-    public PagesUpdateParametersBuilder SetIcon(IPageIcon pageIcon)
-    {
-        this._icon = pageIcon;
-
-        return this;
-    }
-
-    public PagesUpdateParametersBuilder SetCover(FileObject cover)
-    {
-        this._cover = cover;
-
-        return this;
-    }
-
-    public PagesUpdateParameters Build()
-    {
-        return new PagesUpdateParameters
-        {
-            Properties = this._properties,
-            Icon = this._icon,
-            Cover = this._cover,
-            Archived = this._isArchived
-        };
+            )
+            .Build();
     }
 }
