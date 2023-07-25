@@ -37,7 +37,7 @@ class NotionClient : IExportClient, IImportClient
         );
     }
 
-    public async void Export(List<Book> books)
+    public async Task Export(List<Book> books)
     {
         foreach (var book in books)
         {
@@ -47,23 +47,22 @@ class NotionClient : IExportClient, IImportClient
 
             if (pages.Results.Any())
             {
-                this.UpdateBook(book, pages.Results[0]);
+                await this.UpdateBook(book, pages.Results[0]);
                 continue;
             }
 
-            this.CreateBook(book);
+            await this.CreateBook(book);
         }
 
         Console.WriteLine($"Export finished!");
     }
 
-    private async void CreateBook(Book book)
+    private async Task CreateBook(Book book)
     {
-        var builder = this.GetCreateBuilder(book);
-        this.AddClippings(book, builder);
-
-        //TODO: Call notion client & validate result
-        var page = await _client.Pages.CreateAsync(builder.Build());
+        var pagesCreateParameters = this.GetCreateBuilder(book)
+            .AddPageContent(this.CreateTable(book))
+            .Build();
+        var page = await _client.Pages.CreateAsync(pagesCreateParameters);
         if (page?.Id == null)
         {
             Console.WriteLine($"Couldn't create page for book {book.Title} by {book.Author}");
@@ -136,40 +135,94 @@ class NotionClient : IExportClient, IImportClient
             );
     }
 
-    private void AddClippings(Book book, PagesCreateParametersBuilder builder)
+    private TableBlock CreateTable(Book book)
     {
-        foreach (var clipping in book.Clippings)
+        var tableRows = new List<TableRowBlock>
         {
-            //TODO: Improve UI of the found clippings - use a table?
-            builder.AddPageContent(
-                new BulletedListItemBlock()
+            new TableRowBlock()
+            {
+                TableRow = new TableRowBlock.Info()
                 {
-                    BulletedListItem = new BulletedListItemBlock.Info
+                    Cells = new[]
                     {
-                        RichText = new List<RichTextBase>
+                        new List<RichTextText>()
                         {
-                            new RichTextText
+                            new RichTextText()
                             {
-                                Text = new Text
+                                Text = new Text()
                                 {
-                                    Content = $"{clipping.Text} (at Page {clipping.Page})"
+                                    Content = "Clipping"
+                                }
+                            }
+                        },
+                        new List<RichTextText>()
+                        {
+                            new RichTextText()
+                            {
+                                Text = new Text()
+                                {
+                                    Content = "Page"
+                                }
+                            }
+                        },
+                        new List<RichTextText>()
+                        {
+                            new RichTextText()
+                            {
+                                Text = new Text()
+                                {
+                                    Content = "Start Position"
+                                }
+                            }
+                        },
+                        new List<RichTextText>()
+                        {
+                            new RichTextText()
+                            {
+                                Text = new Text()
+                                {
+                                    Content = "Finish Position"
                                 }
                             }
                         }
                     }
                 }
-            );
-        }
+            }
+        };
+
+        tableRows.AddRange(book.Clippings.Select(clipping => new TableRowBlock()
+        {
+            TableRow = new TableRowBlock.Info()
+            {
+                Cells = new[]
+                {
+                    new[] { new RichTextText() { Text = new Text() { Content = clipping.Text } } },
+                    new[] { new RichTextText() { Text = new Text() { Content = clipping.Page.ToString() } } },
+                    new[] { new RichTextText() { Text = new Text() { Content = clipping.StartPosition.ToString() } } },
+                    new[] { new RichTextText() { Text = new Text() { Content = clipping.FinishPosition.ToString() } } }
+                }
+            }
+        }));
+
+        return new TableBlock()
+        {
+            Table = new TableBlock.Info()
+            {
+                TableWidth = 4,
+                HasColumnHeader = true,
+                HasRowHeader = false,
+                Children = tableRows
+            }
+        };
     }
 
-    private async void UpdateBook(Book book, Page page)
+    private async Task UpdateBook(Book book, Page page)
     {
         Console.WriteLine($"Book has already been synced. Therefore it's going to be updated.");
 
         book.LastSynchronized = DateTime.Now;
 
-        //TODO: Update Properties
-        var builder = getUpdateBuilder(book, page);
+        var builder = GetUpdateBuilder(book, page);
 
         var result = await _client.Pages.UpdateAsync(page.Id, builder.Build());
         if (result?.Id == null)
@@ -178,10 +231,23 @@ class NotionClient : IExportClient, IImportClient
         }
 
         //TODO: Update Content of Page
-        return;
+        //Call Blocks API with Page ID as Parent and Add new Content
+        var children = await this._client.Blocks.RetrieveChildrenAsync(page.Id);
+        foreach (var child in children.Results)
+        {
+            await this._client.Blocks.DeleteAsync(child.Id);
+        }
+
+        await this._client.Blocks.AppendChildrenAsync(
+            page.Id,
+            new BlocksAppendChildrenParameters()
+            {
+                Children = new[] { this.CreateTable(book) }
+            }
+        );
     }
 
-    private static PagesUpdateParametersBuilder getUpdateBuilder(Book book, Page page)
+    private static PagesUpdateParametersBuilder GetUpdateBuilder(Book book, Page page)
     {
         var builder = PagesUpdateParametersBuilder.Create(page)
             .AddOrUpdateProperty("Title", new TitlePropertyValue
