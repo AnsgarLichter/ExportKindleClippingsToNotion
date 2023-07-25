@@ -44,9 +44,10 @@ class NotionClient : IExportClient, IImportClient
         {
             var pages = await this.Query(book);
             Console.WriteLine($"Found {pages.Results.Count}");
-
+            
             if (pages.Results.Any())
             {
+                //TODO: Only update if clippings count differs. The current synced clipping count is available in the properties of the page
                 await this.UpdateBook(book, pages.Results[0]);
                 continue;
             }
