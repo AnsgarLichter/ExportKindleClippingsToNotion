@@ -1,25 +1,33 @@
+namespace ExportKindleClippingsToNotion;
+
 public class Book
 {
     public string? Author { get; set; }
     public string? Title { get; set; }
-    public string? LastSynchronized { get; set; }
-    public int? Highlights { get; set; }
-    public List<Clipping> clippings { get; set; } = new List<Clipping>();
+
+    public string? Thumbnail { get; set; }
+
+    public string Emoji { get; set; } = "📖";
+    public DateTime? LastSynchronized { get; set; }
+    public int? Highlights { get; private set; }
+    public List<Clipping> Clippings { get; set; } = new List<Clipping>();
 
     public Book(string author, string title)
     {
         this.Author = author;
         this.Title = title;
+        this.Highlights = 0;
     }
 
     public void AddClipping(Clipping clipping)
     {
-        if (clippings.Contains(clipping))
+        if (Clippings.Contains(clipping))
         {
             return;
         }
 
-        clippings.Add(clipping);
+        Clippings.Add(clipping);
+        this.Highlights += 1;
     }
 
     public override bool Equals(object? obj)

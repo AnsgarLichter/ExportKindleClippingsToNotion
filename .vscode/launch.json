@@ -11,11 +11,14 @@
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/bin/Debug/net6.0/ExportKindleClippingsToNotion.dll",
-            "args": [ "C:\\Users\\Ansgar\\Downloads\\My Clippings.txt" ],
+            "args": [ "./ClippingsExamples/MyClippingsGerman2nd.txt" ],
             "cwd": "${workspaceFolder}",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",
-            "stopAtEntry": false
+            "stopAtEntry": false,
+            "justMyCode": false,
+            "enableStepFiltering": true,
+            "csharp.debug.suppressJITOptimizations": true
         },
         {
             "name": ".NET Core Attach",
