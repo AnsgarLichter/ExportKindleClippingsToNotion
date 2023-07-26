@@ -9,13 +9,14 @@ public class Book
 
     public string Emoji { get; set; } = "📖";
     public DateTime? LastSynchronized { get; set; }
-    public int? Highlights { get; set; }
+    public int? Highlights { get; private set; }
     public List<Clipping> Clippings { get; set; } = new List<Clipping>();
 
     public Book(string author, string title)
     {
         this.Author = author;
         this.Title = title;
+        this.Highlights = 0;
     }
 
     public void AddClipping(Clipping clipping)
@@ -26,6 +27,7 @@ public class Book
         }
 
         Clippings.Add(clipping);
+        this.Highlights += 1;
     }
 
     public override bool Equals(object? obj)
