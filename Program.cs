@@ -37,15 +37,12 @@ if (config is null
 
 try
 {
+    var importer = new Importer();
     var client = new NotionClient(config.NotionAuthenticationToken, config.NotionDatabaseId);
     var exporter = new Exporter(client);
-
+    
     //TODO: Check Stimmlers implementation
-    var clippingsText = File.ReadAllText(pathToClippings);
-    //TODO: Is \n and \n really necessary? Can I exclude these signs from the parsed file?
-    var clippings = clippingsText.Split($"==========\r\n");
     //TODO: Use logger in real architecture
-    Console.WriteLine($"Determined {clippings.Length} clippings");
 
     //TODO: Save Regex in a config object to get regex in dependence of config's language
     const string regexAuthor = "(?<=\\()(?!.+?\\()(.+?)(?=\\))";
