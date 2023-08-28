@@ -5,7 +5,7 @@ using Notion.Client;
 
 namespace ExportKindleClippingsToNotion;
 
-class NotionClient : IExportClient, IImportClient
+class NotionClient : IExportClient
 {
     private readonly Notion.Client.NotionClient _client;
 
