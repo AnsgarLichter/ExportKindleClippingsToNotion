@@ -3,7 +3,7 @@ using Google.Apis.Services;
 
 namespace ExportKindleClippingsToNotion;
 
-interface IBookMetadataFetcher
+public interface IBookMetadataFetcher
 {
     public Task<string?> SearchThumbnail(Book book);
 }

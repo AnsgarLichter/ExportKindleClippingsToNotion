@@ -4,12 +4,12 @@ namespace ExportKindleClippingsToNotion;
 
 interface IImportClient
 {
-    Task<List<Book>> Import(string pathToClippings);
+    Task<string[]> Import(string pathToClippings);
 }
 
 interface IImporter
 {
-    public Task<List<Book>> Import(string pathToClippings);
+    public Task<string[]> Import(string pathToClippings);
 }
 
 class Importer : IImporter
@@ -18,12 +18,12 @@ class Importer : IImporter
 
     public Importer(IImportClient client)
     {
-        this._client = client;
+        _client = client;
     }
 
-    public Task<List<Book>> Import(string pathToClippings)
+    public Task<string[]>Import(string pathToClippings)
     {
         Console.WriteLine($"Starting import.");
-        return this._client.Import(pathToClippings);
+        return _client.Import(pathToClippings);
     }
 }
