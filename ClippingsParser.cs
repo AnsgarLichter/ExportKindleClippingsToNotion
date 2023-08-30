@@ -3,9 +3,6 @@ using System.Text.RegularExpressions;
 
 namespace ExportKindleClippingsToNotion;
 
-//TODO: Check Stimmlers implementation
-//TODO: Save Regex in a config object to get regex in dependence of config's language
-// TODO: Extract parser - Stimmler had a nice suggestion in a voice message in WhatsApp
 public interface IClippingsParser
 {
     public Task<ClippingDto?> Parse(string clipping);
@@ -21,7 +18,7 @@ public class ClippingsParser: IClippingsParser
 
     private const string RegexFinishPosition = "(?<=-)[0-9]+";
 
-    //TODO: Date Regex not working in every case
+    //TODO: Date Regex not working in every case - Otherwise save regexs in a config object to get regex in dependence of config's language
     private const string RegexDate = "\\d{2}[a-zA-Z_ .]*\\d{4}\\s*\\d{2}:\\d{2}:\\d{2}";
     private const string RegexClippingsLimitReached = "<.+?>";
     
@@ -33,7 +30,8 @@ public class ClippingsParser: IClippingsParser
             Console.WriteLine("Found an invalid clipping. Parsing next one ...");
             return Task.FromResult<ClippingDto?>(null);
         }
-
+    
+        //TODO: Parser for every language - loop over them to find a suitable one and use this one to parse
         var lineTitleAndAuthor = lines[0];
         var title = Regex.Match(lineTitleAndAuthor, RegexTitle).Value;
         var author = Regex.Match(lineTitleAndAuthor, RegexAuthor).Value;
