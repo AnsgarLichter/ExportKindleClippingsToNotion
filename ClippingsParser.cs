@@ -17,8 +17,9 @@ public class ClippingsParser: IClippingsParser
     private const string RegexStartPosition = "[0-9]+(?=-)";
 
     private const string RegexFinishPosition = "(?<=-)[0-9]+";
-
-    //TODO: Date Regex not working in every case - Otherwise save regexs in a config object to get regex in dependence of config's language
+    
+    //TODO: Build Factory which returns regex based on clipping's language
+    //TODO: Date Regex not working in every case
     private const string RegexDate = "\\d{2}[a-zA-Z_ .]*\\d{4}\\s*\\d{2}:\\d{2}:\\d{2}";
     private const string RegexClippingsLimitReached = "<.+?>";
     
