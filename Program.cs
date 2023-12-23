@@ -1,10 +1,5 @@
-﻿using System.Text.Json;
-using System.Text.RegularExpressions;
-using System.Globalization;
-using ExportKindleClippingsToNotion;
+﻿using ExportKindleClippingsToNotion;
 using Notion.Client;
-using Google.Apis.Books.v1;
-using Google.Apis.Services;
 using NotionClient = ExportKindleClippingsToNotion.NotionClient;
 
 const string pathToConfig = "params.json";
