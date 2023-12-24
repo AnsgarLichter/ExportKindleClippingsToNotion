@@ -1,9 +1,11 @@
+//TODO: DI?
+
 using ExportKindleClippingsToNotion.Utils;
 using Notion.Client;
 
 namespace ExportKindleClippingsToNotion;
 
-class NotionClient : IExportClient, IImportClient
+class NotionClient : IExportClient
 {
     private readonly Notion.Client.NotionClient _client;
 
@@ -42,24 +44,15 @@ class NotionClient : IExportClient, IImportClient
         {
             var pages = await this.Query(book);
             Console.WriteLine($"Found {pages.Results.Count}");
-
-            if (!pages.Results.Any())
+            
+            if (pages.Results.Any())
             {
-                await this.CreateBook(book);
+                //TODO: Only update if clippings count differs. The current synced clipping count is available in the properties of the page
+                await this.UpdateBook(book, pages.Results[0]);
                 continue;
             }
 
-            var page = pages.Results[0];
-            var countOfHighlightsProperty = (NumberPropertyValue)page.Properties["Highlights"];
-            if (Convert.ToInt32(countOfHighlightsProperty.Number ?? 0) == book.Highlights)
-            {
-                Console.WriteLine(
-                    $"The synced count of highlights is the same as the count of clippings in the file for {book.Title} by {book.Author}. Therefore the book won't be updated."
-                );
-                continue;
-            }
-
-            await this.UpdateBook(book, pages.Results[0]);
+            await this.CreateBook(book);
         }
 
         Console.WriteLine($"Export finished!");
@@ -228,13 +221,14 @@ class NotionClient : IExportClient, IImportClient
         Console.WriteLine($"Book has already been synced. Therefore it's going to be updated.");
 
         book.LastSynchronized = DateTime.Now;
-
+        
         var result = await _client.Pages.UpdateAsync(page.Id, GetUpdateBuilder(book, page));
         if (result?.Id == null)
         {
             throw new Exception($"Properties of page ${page.Id} couldn't be updated.");
         }
-
+        
+        //TODO: Only update if clippings count differs
         var children = await this._client.Blocks.RetrieveChildrenAsync(page.Id);
         foreach (var child in children.Results)
         {

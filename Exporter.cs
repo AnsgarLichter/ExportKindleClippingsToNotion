@@ -1,16 +1,16 @@
 namespace ExportKindleClippingsToNotion;
 
-internal interface IExporter
+interface IExporter
 {
     Task Export(List<Book> books);
 }
 
-internal interface IExportClient
+interface IExportClient
 {
     Task Export(List<Book> books);
 }
 
-internal class Exporter : IExporter
+class Exporter : IExporter
 {
     private readonly IExportClient _client;
 
