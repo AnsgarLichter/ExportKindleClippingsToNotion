@@ -4,6 +4,30 @@ using JetBrains.Annotations;
 namespace UnitTests.Parser;
 
 [TestSubject(typeof(ClippingsLanguage))]
+
+public class UnsupportedLanguages : IEnumerable<object[]>
+{
+    public IEnumerator<object[]> GetEnumerator()
+    {
+        yield return new object[] { """
+                                    How To Win Friends and Influence People (Carnegie, Dale)
+                                    - asdasdasdlösajdsad 79 | asdasdasdsa 1293-1295 | sadaasdasds, 30 asdasdas 2022 19:40:15
+
+                                    7​. ​​​An Easy Way to Become a Good Conversationalist​​
+                                    ==========
+                                    """ };
+        yield return new object[] { """
+                                    How To Win Friends and Influence People (Carnegie, Dale)
+                                    - asdasdasdlösajdsad 79 | asdasdasdsa 1293-1295 | sadaasdasds, 30 asdasdas 2022 19:40:15
+
+                                    7​. ​​​An Easy Way to Become a Good Conversationalist​​
+                                    ==========
+                                    """ };
+    }
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+}
+
 public class ClippingsLanguageTest
 {
     private const string EnglishClipping = """
@@ -57,16 +81,17 @@ public class ClippingsLanguageTest
         Assert.Equal(SupportedLanguages.German, determinedLanguage);
     }
 
-    [Fact]
-    public void ReturnsNotSupportedForSpanish()
+    [Theory]
+    [ClassData(typeof(UnsupportedLanguages))]
+    public void ReturnsNotSupportedForSpanish(string clipping)
     {
         var clippingsLanguage = new ClippingsLanguage();
 
         var exception =
-            Assert.Throws<LanguageNotSupportedException>(() => clippingsLanguage.Determine(SpanishClipping));
+            Assert.Throws<LanguageNotSupportedException>(() => clippingsLanguage.Determine(clipping));
 
         Assert.NotNull(exception);
-        Assert.Equal($"Spanish is currently not supported!", exception.Message);
+        Assert.Equal($"The language of your clipping is currently not supported!", exception.Message);
     }
 
     [Fact]
@@ -75,9 +100,9 @@ public class ClippingsLanguageTest
         var clippingsLanguage = new ClippingsLanguage();
 
         var exception =
-            Assert.Throws<LanguageNotRecognizedException>(() => clippingsLanguage.Determine(UnknownClipping));
+            Assert.Throws<LanguageNotRecognizedException>(() => clippingsLanguage.Determine(""));
 
         Assert.NotNull(exception);
-        Assert.Equal($"The language of the clipping couldn't be determined!", exception.Message);
+        Assert.Equal($"The language of your clipping can't be recognized!", exception.Message);
     }
 }
