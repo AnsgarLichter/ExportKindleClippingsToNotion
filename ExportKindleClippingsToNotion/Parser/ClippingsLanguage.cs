@@ -8,7 +8,7 @@ public class ClippingsLanguage()
     private const string GermanClipping = "Ihre Markierung bei Position";
     private const string SpanishClipping = "La subrayado en la página";
 
-    private readonly Dictionary<SupportedLanguages, string> languageIdentifiers =
+    private readonly Dictionary<SupportedLanguages, string> _languageIdentifiers =
         new Dictionary<SupportedLanguages, string>
         {
             { SupportedLanguages.English, "Your Highlight on page" },
@@ -29,7 +29,7 @@ public class ClippingsLanguage()
             throw new LanguageNotRecognizedException("The language of your clipping can't be recognized!");
         }
 
-        foreach (var identifier in languageIdentifiers
+        foreach (var identifier in _languageIdentifiers
                      .Where(identifier => secondLine.Contains(identifier.Value)))
             return identifier.Key;
 
