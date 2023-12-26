@@ -8,8 +8,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Google.Apis.Books.v1" Version="1.64.0.2955" />
-      <PackageReference Include="Notion.Net" Version="4.2.0" />
+        <PackageReference Include="EnumStringValues" Version="4.0.2"/>
+        <PackageReference Include="FakeItEasy" Version="8.0.1" />
+        <PackageReference Include="Google.Apis.Books.v1" Version="1.64.0.2955"/>
+        <PackageReference Include="Notion.Net" Version="4.2.0"/>
     </ItemGroup>
-
+    
+    <ItemGroup>
+        <Content Include="Assets/**">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Assets\" />
+    </ItemGroup>
 </Project>

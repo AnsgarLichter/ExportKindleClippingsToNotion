@@ -32,8 +32,7 @@ try
     var importer = new Importer(new FileClient());
     var booksParser = new BooksParser(metadataFetcher, clippingsParser);
     var exporter = new Exporter(client);
-
-    //TODO: Validate if importer & parser are actually working
+    
     var clippings = await importer.Import(pathToClippings);
     var books = await booksParser.Parse(clippings);
     await exporter.Export(books);
