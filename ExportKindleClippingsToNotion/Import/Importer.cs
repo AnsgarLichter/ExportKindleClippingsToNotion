@@ -1,6 +1,4 @@
-using Notion.Client;
-
-namespace ExportKindleClippingsToNotion;
+namespace ExportKindleClippingsToNotion.Import;
 
 interface IImportClient
 {

@@ -1,4 +1,4 @@
-﻿namespace ExportKindleClippingsToNotion;
+﻿namespace ExportKindleClippingsToNotion.Model.Dto;
 
 public class ClippingDto
 {

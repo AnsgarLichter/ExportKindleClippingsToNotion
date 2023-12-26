@@ -1,7 +1,4 @@
-﻿using System.Globalization;
-using System.Text.RegularExpressions;
-
-namespace ExportKindleClippingsToNotion;
+﻿namespace ExportKindleClippingsToNotion.Import;
 
 public class FileClient : IImportClient
 {

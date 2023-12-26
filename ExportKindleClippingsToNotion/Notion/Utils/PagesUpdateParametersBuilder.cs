@@ -1,6 +1,6 @@
 ﻿using Notion.Client;
 
-namespace ExportKindleClippingsToNotion.Utils;
+namespace ExportKindleClippingsToNotion.Notion.Utils;
 
 public class PagesUpdateParametersBuilder
 {

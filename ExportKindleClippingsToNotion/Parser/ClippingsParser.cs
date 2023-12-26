@@ -1,7 +1,9 @@
 ﻿using System.Globalization;
 using System.Text.RegularExpressions;
+using ExportKindleClippingsToNotion.Model;
+using ExportKindleClippingsToNotion.Model.Dto;
 
-namespace ExportKindleClippingsToNotion;
+namespace ExportKindleClippingsToNotion.Parser;
 
 public interface IClippingsParser
 {

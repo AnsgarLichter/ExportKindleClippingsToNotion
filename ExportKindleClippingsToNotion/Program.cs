@@ -1,8 +1,12 @@
-﻿using ExportKindleClippingsToNotion;
+﻿using ExportKindleClippingsToNotion.Config;
+using ExportKindleClippingsToNotion.Export;
+using ExportKindleClippingsToNotion.Import;
+using ExportKindleClippingsToNotion.Import.Metadata;
+using ExportKindleClippingsToNotion.Parser;
 using Notion.Client;
-using NotionClient = ExportKindleClippingsToNotion.NotionClient;
+using NotionClient = ExportKindleClippingsToNotion.Notion.NotionClient;
 
-const string pathToConfig = "params.json";
+const string pathToConfig = "../params.json";
 //TODO: Use logger in real architecture that writes the log to the console
 if (args.Length == 0)
 {
