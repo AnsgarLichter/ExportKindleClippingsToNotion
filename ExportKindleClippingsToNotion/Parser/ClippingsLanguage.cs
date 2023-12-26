@@ -9,7 +9,7 @@ public class ClippingsLanguage()
     private const string SpanishClipping = "La subrayado en la página";
 
     private readonly Dictionary<SupportedLanguages, string> _languageIdentifiers =
-        new Dictionary<SupportedLanguages, string>
+        new()
         {
             { SupportedLanguages.English, "Your Highlight on page" },
             { SupportedLanguages.German, "Ihre Markierung bei Position" }
