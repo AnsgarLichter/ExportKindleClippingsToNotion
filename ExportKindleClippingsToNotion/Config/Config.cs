@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace ExportKindleClippingsToNotion;
+namespace ExportKindleClippingsToNotion.Config;
 
 public class Config
 {

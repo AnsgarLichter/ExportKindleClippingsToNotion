@@ -1,19 +1,20 @@
-//TODO: DI?
-
-using ExportKindleClippingsToNotion.Utils;
+using ExportKindleClippingsToNotion.Export;
+using ExportKindleClippingsToNotion.Model;
+using ExportKindleClippingsToNotion.Notion.Utils;
 using Notion.Client;
 
-namespace ExportKindleClippingsToNotion;
+namespace ExportKindleClippingsToNotion.Notion;
 
 class NotionClient : IExportClient
 {
-    private readonly Notion.Client.NotionClient _client;
+    private readonly global::Notion.Client.NotionClient _client;
 
     private readonly string _databaseId;
 
     public NotionClient(string authenticationToken, string databaseId)
     {
         this._databaseId = databaseId;
+        //TODO: DI?
         this._client = NotionClientFactory.Create(
             new ClientOptions
             {

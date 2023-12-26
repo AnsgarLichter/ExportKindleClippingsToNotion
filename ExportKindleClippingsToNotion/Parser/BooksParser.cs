@@ -1,4 +1,7 @@
-﻿namespace ExportKindleClippingsToNotion;
+﻿using ExportKindleClippingsToNotion.Import.Metadata;
+using ExportKindleClippingsToNotion.Model;
+
+namespace ExportKindleClippingsToNotion.Parser;
 
 public interface IBooksParser
 {

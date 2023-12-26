@@ -1,4 +1,6 @@
-namespace ExportKindleClippingsToNotion;
+using ExportKindleClippingsToNotion.Model;
+
+namespace ExportKindleClippingsToNotion.Export;
 
 interface IExporter
 {

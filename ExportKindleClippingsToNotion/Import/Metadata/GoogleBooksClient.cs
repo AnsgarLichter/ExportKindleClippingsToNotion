@@ -1,7 +1,8 @@
-﻿using Google.Apis.Books.v1;
+﻿using ExportKindleClippingsToNotion.Model;
+using Google.Apis.Books.v1;
 using Google.Apis.Services;
 
-namespace ExportKindleClippingsToNotion;
+namespace ExportKindleClippingsToNotion.Import.Metadata;
 
 public interface IBookMetadataFetcher
 {

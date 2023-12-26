@@ -1,4 +1,4 @@
-namespace ExportKindleClippingsToNotion;
+namespace ExportKindleClippingsToNotion.Model;
 
 public class Book
 {
