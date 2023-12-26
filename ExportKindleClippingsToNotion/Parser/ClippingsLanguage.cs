@@ -1,4 +1,4 @@
-﻿using EnumStringValues;
+﻿using static System.String;
 
 namespace ExportKindleClippingsToNotion.Parser;
 
@@ -14,9 +14,9 @@ public class ClippingsLanguage()
             .Split("\r\n")
             .Where(line => line.Length > 0)
             .Select(line => line.Trim())
-            .Select(line => line.Replace("\u200B", string.Empty))
+            .Select(line => line.Replace("\u200B", Empty))
             .ElementAtOrDefault(1);
-        if (secondLine == null)
+        if (IsNullOrWhiteSpace(secondLine?.Trim()))
         {
             throw new LanguageNotRecognizedException("The language of the clipping couldn't be determined!");
         }
