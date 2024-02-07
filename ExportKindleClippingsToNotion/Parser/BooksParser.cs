@@ -31,7 +31,7 @@ public class BooksParser : IBooksParser
 
         foreach (var clipping in clippings)
         {
-            var dto = await _clippingsParser.Parse(clipping);
+            var dto = await _clippingsParser.ParseAsync(clipping);
             if (dto?.Clipping == null || dto?.Author == null || dto?.Title == null)
             {
                 continue;

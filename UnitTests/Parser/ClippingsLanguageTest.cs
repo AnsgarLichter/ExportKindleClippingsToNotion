@@ -4,7 +4,6 @@ using JetBrains.Annotations;
 namespace UnitTests.Parser;
 
 [TestSubject(typeof(ClippingsLanguage))]
-
 public class UnsupportedLanguages : IEnumerable<object[]>
 {
     public IEnumerator<object[]> GetEnumerator()
