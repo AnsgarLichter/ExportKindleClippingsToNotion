@@ -9,7 +9,7 @@ public class ClippingsParserFactoryTest
 {
 
     [Fact]
-    public void ReturnsParserWithEnglishConfiguration()
+    public void ReturnsEnglishParserForEnglishLanguage()
     {
         var factory = new ClippingsParserFactory();
         
@@ -17,10 +17,19 @@ public class ClippingsParserFactoryTest
     }
     
     [Fact]
-    public void ReturnsParserWithGermanConfiguration()
+    public void ReturnsGermanParserForGermanLanguage()
     {
         var factory = new ClippingsParserFactory();
         
         Assert.IsType<ClippingsParserGerman>(factory.GetByLanguage(SupportedLanguages.German));
+    }
+
+    [Fact]
+    public void ThrowsExceptionForUnsupportedLanguage()
+    {
+        var factory = new ClippingsParserFactory();
+        const SupportedLanguages unsupportedLanguage = (SupportedLanguages)100;
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => factory.GetByLanguage(unsupportedLanguage));
     }
 }

@@ -8,7 +8,7 @@ public class ClippingsParserFactory
         {
             SupportedLanguages.English => new ClippingsParserEnglish(),
             SupportedLanguages.German => new ClippingsParserGerman(),
-            _ => throw new LanguageNotSupportedException("Your current language is not supported")
+            _ => throw new ArgumentOutOfRangeException(nameof(languages), languages, null)
         };
     }
 }
