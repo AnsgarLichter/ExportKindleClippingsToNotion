@@ -3,7 +3,7 @@ using ExportKindleClippingsToNotion.Model.Dto;
 
 namespace ExportKindleClippingsToNotion.Parser;
 
-public class ClippingsParser(ClippingsLanguageConfiguration languageConfiguration) : IClippingsParser
+public abstract class ClippingsParser(ClippingsLanguageConfiguration languageConfiguration) : IClippingsParser
 {
     public Task<ClippingDto?> ParseAsync(string clipping)
     {

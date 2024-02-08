@@ -6,8 +6,8 @@ public class ClippingsParserFactory
     {
         return languages switch
         {
-            SupportedLanguages.English => new ClippingsParser(ClippingsLanguageConfigurations.English),
-            SupportedLanguages.German => new ClippingsParser(ClippingsLanguageConfigurations.German),
+            SupportedLanguages.English => new ClippingsParserEnglish(),
+            SupportedLanguages.German => new ClippingsParserGerman(),
             _ => throw new LanguageNotSupportedException("Your current language is not supported")
         };
     }

@@ -27,7 +27,7 @@ try
 
     var client = new NotionClient(config.NotionAuthenticationToken, config.NotionDatabaseId);
     var metadataFetcher = new GoogleBooksClient();
-    var clippingsParser = new ClippingsParser(ClippingsLanguageConfigurations.German);
+    var clippingsParser = new ClippingsParserGerman();
 
     var importer = new Importer(new FileClient());
     var booksParser = new BooksParser(metadataFetcher, clippingsParser);
