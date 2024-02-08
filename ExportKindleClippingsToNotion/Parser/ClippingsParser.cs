@@ -23,7 +23,7 @@ public abstract class ClippingsParser(ClippingsLanguageConfiguration languageCon
         var startPosition = languageConfiguration.StartPosition.Match(linePagePositionDate).Value;
         var finishPosition = languageConfiguration.FinishPosition.Match(linePagePositionDate).Value;
         var date = languageConfiguration.Date.Match(linePagePositionDate).Value;
-        
+        // TODO: date string may be null - should be validated before
         var dateTime = DateTime.Parse(date, languageConfiguration.CultureInfo);
         var text = lines[3];
         if (languageConfiguration.ClippingsLimitReached.IsMatch(text))
