@@ -17,8 +17,28 @@ public class ClippingsParserGermanTest
     }
 
     [Theory]
-    [ClassData(typeof(ValidClippingTestData))]
+    [ClassData(typeof(ValidGermanClippingTestData))]
     public async Task ReturnsAValidClipping(string clipping, string expectedAuthor, string expectedTitle,
+        int expectedStartPosition, int expectedFinishPosition, int expectedPage, DateTime expectedHighlightDate,
+        string expectedText)
+    {
+        var parser = new ClippingsParserGerman();
+        var result = await parser.ParseAsync(clipping);
+
+        Assert.NotNull(result);
+        Assert.Equal(expectedAuthor, result.Author);
+        Assert.Equal(expectedTitle, result.Title);
+        Assert.NotNull(result.Clipping);
+        Assert.Equal(expectedStartPosition, result.Clipping.StartPosition);
+        Assert.Equal(expectedFinishPosition, result.Clipping.FinishPosition);
+        Assert.Equal(expectedPage, result.Clipping.Page);
+        Assert.Equal(expectedHighlightDate, result.Clipping.HighlightDate);
+        Assert.Equal(expectedText, result.Clipping.Text);
+    }
+    
+    [Theory]
+    [ClassData(typeof(InvalidGermanClippingTestData))]
+    public async Task ReturnsBestMatchForInvalidClipping(string clipping, string expectedAuthor, string expectedTitle,
         int expectedStartPosition, int expectedFinishPosition, int expectedPage, DateTime expectedHighlightDate,
         string expectedText)
     {
@@ -37,7 +57,7 @@ public class ClippingsParserGermanTest
     }
 }
 
-public class ValidClippingTestData : IEnumerable<object[]>
+public class ValidGermanClippingTestData : IEnumerable<object[]>
 {
     public IEnumerator<object[]> GetEnumerator()
     {
@@ -106,6 +126,26 @@ public class ValidClippingTestData : IEnumerable<object[]>
             13,
             DateTime.Parse("2022-01-10T22:58:55"),
             "Aktives Anlagemanagement ist der Versuch, auf der Basis einer bestimmten Anlagestrategie eine »Überrendite« (neudeutsch »Outperformance«, »Excess-Return« oder »alpha«) zu erzielen, also eine höhere Rendite als der Durchschnitt der übrigen Marktteilnehmer – gemessen an einem sinnvollen Vergleichsindex"
+        };
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+}
+
+public class InvalidGermanClippingTestData : IEnumerable<object[]>
+{
+    public IEnumerator<object[]> GetEnumerator()
+    {
+        yield return new object[]
+        {
+            "Robert C. Martin (Clean Code A Handbook of Agile Software Craftsmanship-Prentice Hall (2008))\n- Ihre Markierung bei Position 1138-1138 | Hinzugefügt am Samstag, 3. Juli 2021 17:52:09\n\nyou first look at the method, the meanings of the variables are opaque.",
+            "2008",
+            "Robert C. Martin",
+            1138,
+            1138,
+            0,
+            DateTime.Parse("2021-07-03T17:52:09"),
+            "you first look at the method, the meanings of the variables are opaque."
         };
     }
 
