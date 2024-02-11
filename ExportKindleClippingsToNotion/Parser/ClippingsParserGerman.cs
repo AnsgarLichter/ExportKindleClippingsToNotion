@@ -5,8 +5,7 @@ namespace ExportKindleClippingsToNotion.Parser;
 
 public class ClippingsParserGerman() : ClippingsParser(new ClippingsLanguageConfiguration
 {
-    // TODO: Fix Regex to match both variants
-    Author = new Regex(@"(?<=\()(?!.+?\()(.+?)(?=\))"), // (?<=\().+?(?= \)| \()
+    Author = new Regex(@"(?<=\()(?!.+?\()(.+?)(?=\))"),
     Title = new Regex(@"^[^(]+?(?=\s\()"),
     Date = new Regex(@"(\d+)\. (\w+) (\d+) (\d+:\d+:\d+)"),
     Page = new Regex("(?<=Seite )[0-9]*"),
