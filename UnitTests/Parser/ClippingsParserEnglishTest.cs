@@ -55,6 +55,16 @@ public class ClippingsParserEnglishTest
         Assert.Equal(expectedHighlightDate, result.Clipping.HighlightDate);
         Assert.Equal(expectedText, result.Clipping.Text);
     }
+    
+    [Fact]
+    public async Task ReturnsNullIfLimitHasBeenReached()
+    {
+        var clipping = "How To Win Friends and Influence People (Carnegie, Dale)\n- Your Highlight on page 79 | location 1293-1295 | Added on Tuesday, 30 August 2022 19:31:58\n\n <You have reached the clipping limit for this item> ";
+        var parser = new ClippingsParserEnglish();
+
+        Assert.Null(await parser.ParseAsync(clipping));
+    }
+    
 }
 
 public class ValidEnglishClippingTestData : IEnumerable<object[]>

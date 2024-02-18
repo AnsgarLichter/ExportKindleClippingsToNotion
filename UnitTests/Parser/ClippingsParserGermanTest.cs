@@ -55,6 +55,15 @@ public class ClippingsParserGermanTest
         Assert.Equal(expectedHighlightDate, result.Clipping.HighlightDate);
         Assert.Equal(expectedText, result.Clipping.Text);
     }
+    
+    [Fact]
+    public async Task ReturnsNullIfLimitHasBeenReached()
+    {
+        const string clipping = "How To Win Friends and Influence People (Carnegie, Dale)\n- Your Highlight on page 79 | location 1293-1295 | Added on Tuesday, 30 August 2022 19:31:58\n\n <Sie haben die maximale Anzahl an Clipboard-Einträgen für diesen Inhalt erreicht> ";
+        var parser = new ClippingsParserEnglish();
+
+        Assert.Null(await parser.ParseAsync(clipping));
+    }
 }
 
 public class ValidGermanClippingTestData : IEnumerable<object[]>
