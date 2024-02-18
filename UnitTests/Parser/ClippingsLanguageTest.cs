@@ -4,29 +4,6 @@ using JetBrains.Annotations;
 namespace UnitTests.Parser;
 
 [TestSubject(typeof(ClippingsLanguage))]
-public class UnsupportedLanguages : IEnumerable<object[]>
-{
-    public IEnumerator<object[]> GetEnumerator()
-    {
-        yield return new object[] { """
-                                    How To Win Friends and Influence People (Carnegie, Dale)
-                                    - asdasdasdlösajdsad 79 | asdasdasdsa 1293-1295 | sadaasdasds, 30 asdasdas 2022 19:40:15
-
-                                    7​. ​​​An Easy Way to Become a Good Conversationalist​​
-                                    ==========
-                                    """ };
-        yield return new object[] { """
-                                    How To Win Friends and Influence People (Carnegie, Dale)
-                                    - asdasdasdlösajdsad 79 | asdasdasdsa 1293-1295 | sadaasdasds, 30 asdasdas 2022 19:40:15
-
-                                    7​. ​​​An Easy Way to Become a Good Conversationalist​​
-                                    ==========
-                                    """ };
-    }
-
-    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
-}
-
 public class ClippingsLanguageTest
 {
     private const string EnglishClipping = """
@@ -104,4 +81,27 @@ public class ClippingsLanguageTest
         Assert.NotNull(exception);
         Assert.Equal($"The language of your clipping can't be recognized!", exception.Message);
     }
+}
+
+public class UnsupportedLanguages : IEnumerable<object[]>
+{
+    public IEnumerator<object[]> GetEnumerator()
+    {
+        yield return new object[] { """
+                                    How To Win Friends and Influence People (Carnegie, Dale)
+                                    - asdasdasdlösajdsad 79 | asdasdasdsa 1293-1295 | sadaasdasds, 30 asdasdas 2022 19:40:15
+
+                                    7​. ​​​An Easy Way to Become a Good Conversationalist​​
+                                    ==========
+                                    """ };
+        yield return new object[] { """
+                                    How To Win Friends and Influence People (Carnegie, Dale)
+                                    - asdasdasdlösajdsad 79 | asdasdasdsa 1293-1295 | sadaasdasds, 30 asdasdas 2022 19:40:15
+
+                                    7​. ​​​An Easy Way to Become a Good Conversationalist​​
+                                    ==========
+                                    """ };
+    }
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
 }
