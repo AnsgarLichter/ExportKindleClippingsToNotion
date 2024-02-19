@@ -3,25 +3,12 @@ using ExportKindleClippingsToNotion.Model;
 
 namespace ExportKindleClippingsToNotion.Parser;
 
-public interface IBooksParser
+public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser clippingsParser)
+    : IBooksParser
 {
-    public Task<List<Book>> Parse(IEnumerable<string> clippings);
-}
-
-public class BooksParser : IBooksParser
-{
-    private readonly IBookMetadataFetcher _metadataFetcher;
-    private readonly IClippingsParser _clippingsParser;
-
-    public BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser clippingsParser)
+    public async Task<List<Book>> ParseAsync(IEnumerable<string> clippings)
     {
-        _metadataFetcher = metadataFetcher;
-        _clippingsParser = clippingsParser;
-    }
-
-    public Task<List<Book>> Parse(IEnumerable<string> clippings)
-    {
-        return ParseBooks(clippings);
+        return await ParseBooks(clippings);
     }
 
     private async Task<List<Book>> ParseBooks(IEnumerable<string> clippings)
@@ -31,7 +18,7 @@ public class BooksParser : IBooksParser
 
         foreach (var clipping in clippings)
         {
-            var dto = await _clippingsParser.ParseAsync(clipping);
+            var dto = await clippingsParser.ParseAsync(clipping);
             if (dto?.Clipping == null || dto?.Author == null || dto?.Title == null)
             {
                 continue;
@@ -58,7 +45,7 @@ public class BooksParser : IBooksParser
 
     private async Task AddThumbnail(Book book)
     {
-        book.Thumbnail = await _metadataFetcher.SearchThumbnail(book);
+        book.Thumbnail = await metadataFetcher.SearchThumbnail(book);
         if (book.Thumbnail == null || book.Thumbnail.Trim().Length == 0)
         {
             //TODO: Use fallback image
