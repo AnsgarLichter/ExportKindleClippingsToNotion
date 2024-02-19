@@ -34,7 +34,7 @@ try
     var exporter = new Exporter(client);
     
     var clippings = await importer.Import(pathToClippings);
-    var books = await booksParser.Parse(clippings);
+    var books = await booksParser.ParseAsync(clippings);
     await exporter.Export(books);
 }
 catch (NotionApiException notionApiException)
