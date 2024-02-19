@@ -11,7 +11,7 @@
 
     <ItemGroup>
         <PackageReference Include="EnumStringValues" Version="4.0.2" />
-        <PackageReference Include="FakeItEasy" Version="8.0.1" />
+        <PackageReference Include="FakeItEasy" Version="8.1.0" />
         <PackageReference Include="JetBrains.Annotations" Version="2023.3.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0"/>
         <PackageReference Include="Moq" Version="4.20.70" />
