@@ -7,20 +7,14 @@ namespace ExportKindleClippingsToNotion.Notion;
 
 class NotionClient : IExportClient
 {
-    private readonly global::Notion.Client.NotionClient _client;
+    private readonly INotionClient _client;
 
     private readonly string _databaseId;
 
-    public NotionClient(string authenticationToken, string databaseId)
+    public NotionClient(string databaseId, INotionClient notionClient)
     {
         this._databaseId = databaseId;
-        //TODO: DI?
-        this._client = NotionClientFactory.Create(
-            new ClientOptions
-            {
-                AuthToken = authenticationToken
-            }
-        );
+        this._client = notionClient;
     }
 
     public Task<Database> GetDatabase()

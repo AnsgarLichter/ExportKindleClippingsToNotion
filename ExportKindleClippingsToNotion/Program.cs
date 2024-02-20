@@ -24,8 +24,13 @@ if (!File.Exists(pathToClippings))
 try
 {
     var config = new Config(pathToConfig);
-
-    var client = new NotionClient(config.NotionAuthenticationToken, config.NotionDatabaseId);
+    var notionClient = NotionClientFactory.Create(
+        new ClientOptions
+        {
+            AuthToken = config.NotionAuthenticationToken
+        }
+    );
+    var client = new NotionClient(config.NotionDatabaseId, notionClient);
     var metadataFetcher = new GoogleBooksClient();
     var clippingsParser = new ClippingsParserGerman();
 
