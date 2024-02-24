@@ -1,27 +1,20 @@
 namespace ExportKindleClippingsToNotion.Import;
 
-interface IImportClient
+public interface IImportClient
 {
     Task<string[]> Import(string pathToClippings);
 }
 
-interface IImporter
+public interface IImporter
 {
     public Task<string[]> Import(string pathToClippings);
 }
 
-class Importer : IImporter
+public class Importer(IImportClient client) : IImporter
 {
-    private readonly IImportClient _client;
-
-    public Importer(IImportClient client)
-    {
-        _client = client;
-    }
-
     public Task<string[]>Import(string pathToClippings)
     {
         Console.WriteLine($"Starting import.");
-        return _client.Import(pathToClippings);
+        return client.Import(pathToClippings);
     }
 }

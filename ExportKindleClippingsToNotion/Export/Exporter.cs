@@ -2,28 +2,21 @@ using ExportKindleClippingsToNotion.Model;
 
 namespace ExportKindleClippingsToNotion.Export;
 
-interface IExporter
+public interface IExporter
 {
     Task Export(List<Book> books);
 }
 
-interface IExportClient
+public interface IExportClient
 {
     Task Export(List<Book> books);
 }
 
-class Exporter : IExporter
+public class Exporter(IExportClient client) : IExporter
 {
-    private readonly IExportClient _client;
-
-    public Exporter(IExportClient client)
-    {
-        this._client = client;
-    }
-
     public Task Export(List<Book> books)
     {
         Console.WriteLine($"Starting export.");
-        return this._client.Export(books);
+        return client.Export(books);
     }
 }

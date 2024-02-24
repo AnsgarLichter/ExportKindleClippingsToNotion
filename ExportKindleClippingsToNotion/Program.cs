@@ -1,10 +1,12 @@
-﻿using ExportKindleClippingsToNotion.Config;
+﻿using System.IO.Abstractions;
+using ExportKindleClippingsToNotion.Config;
 using ExportKindleClippingsToNotion.Export;
 using ExportKindleClippingsToNotion.Import;
 using ExportKindleClippingsToNotion.Import.Metadata;
 using ExportKindleClippingsToNotion.Notion.Utils;
 using ExportKindleClippingsToNotion.Parser;
 using Notion.Client;
+using BooksService = ExportKindleClippingsToNotion.Import.Metadata.BooksService;
 using NotionClient = ExportKindleClippingsToNotion.Notion.NotionClient;
 
 const string pathToConfig = "../params.json";
@@ -24,7 +26,9 @@ if (!File.Exists(pathToClippings))
 
 try
 {
-    var config = new Config(pathToConfig);
+    var fileSystem = new FileSystem();
+    var configReader = new ConfigReader(fileSystem);
+    var config = await configReader.ExecuteAsync(pathToConfig);
     var notionClient = NotionClientFactory.Create(
         new ClientOptions
         {
@@ -32,10 +36,10 @@ try
         }
     );
     var client = new NotionClient(config.NotionDatabaseId, notionClient, new PagesUpdateParametersBuilder());
-    var metadataFetcher = new GoogleBooksClient();
+    var metadataFetcher = new GoogleBooksClient(new BooksService());
     var clippingsParser = new ClippingsParserGerman();
 
-    var importer = new Importer(new FileClient());
+    var importer = new Importer(new FileClient(fileSystem));
     var booksParser = new BooksParser(metadataFetcher, clippingsParser);
     var exporter = new Exporter(client);
     
