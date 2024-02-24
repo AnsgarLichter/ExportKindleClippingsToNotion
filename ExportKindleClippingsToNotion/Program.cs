@@ -2,6 +2,7 @@
 using ExportKindleClippingsToNotion.Export;
 using ExportKindleClippingsToNotion.Import;
 using ExportKindleClippingsToNotion.Import.Metadata;
+using ExportKindleClippingsToNotion.Notion.Utils;
 using ExportKindleClippingsToNotion.Parser;
 using Notion.Client;
 using NotionClient = ExportKindleClippingsToNotion.Notion.NotionClient;
@@ -30,7 +31,7 @@ try
             AuthToken = config.NotionAuthenticationToken
         }
     );
-    var client = new NotionClient(config.NotionDatabaseId, notionClient);
+    var client = new NotionClient(config.NotionDatabaseId, notionClient, new PagesUpdateParametersBuilder());
     var metadataFetcher = new GoogleBooksClient();
     var clippingsParser = new ClippingsParserGerman();
 

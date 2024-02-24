@@ -2,49 +2,37 @@
 
 namespace ExportKindleClippingsToNotion.Notion.Utils;
 
-public class PagesUpdateParametersBuilder
+public class PagesUpdateParametersBuilder : IPagesUpdateParametersBuilder
 {
     private Dictionary<string, PropertyValue> _properties = new();
-    private FileObject? _cover;
-    private IPageIcon? _icon;
-    private bool _isArchived;
+    private FileObject? _cover = null;
+    private IPageIcon? _icon = null;
+    private bool _isArchived = false;
 
-    private PagesUpdateParametersBuilder()
+    public IPagesUpdateParametersBuilder WithProperty(string nameOrId, PropertyValue value)
     {
-    }
-
-    public static PagesUpdateParametersBuilder Create(Page page)
-    {
-        var builder = new PagesUpdateParametersBuilder()
-        {
-            _properties = (Dictionary<string, PropertyValue>)page.Properties,
-            _cover = page.Cover,
-            _icon = page.Icon,
-            _isArchived = page.IsArchived
-        };
-
-        builder._properties.Remove("Last Edited");
-
-        return builder;
-    }
-
-    public PagesUpdateParametersBuilder AddOrUpdateProperty(string nameOrId, PropertyValue value)
-    {
-        this._properties[nameOrId] = value;
+        _properties[nameOrId] = value;
 
         return this;
     }
 
-    public PagesUpdateParametersBuilder SetIcon(IPageIcon pageIcon)
+    public IPagesUpdateParametersBuilder WithIcon(IPageIcon pageIcon)
     {
-        this._icon = pageIcon;
+        _icon = pageIcon;
 
         return this;
     }
 
-    public PagesUpdateParametersBuilder SetCover(FileObject cover)
+    public IPagesUpdateParametersBuilder WithCover(FileObject cover)
     {
-        this._cover = cover;
+        _cover = cover;
+
+        return this;
+    }
+
+    public IPagesUpdateParametersBuilder WithIsArchived(bool isArchived)
+    {
+        _isArchived = isArchived;
 
         return this;
     }
@@ -53,10 +41,20 @@ public class PagesUpdateParametersBuilder
     {
         return new PagesUpdateParameters
         {
-            Properties = this._properties,
-            Icon = this._icon,
-            Cover = this._cover,
-            Archived = this._isArchived
+            Properties = _properties,
+            Icon = _icon,
+            Cover = _cover,
+            Archived = _isArchived
         };
+    }
+
+    public IPagesUpdateParametersBuilder Reset()
+    {
+        _properties = new();
+        _cover = null;
+        _icon = null;
+        _isArchived = false;
+
+        return this;
     }
 }

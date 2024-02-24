@@ -5,27 +5,20 @@ using Notion.Client;
 
 namespace ExportKindleClippingsToNotion.Notion;
 
-class NotionClient : IExportClient
+public class NotionClient(string databaseId, INotionClient notionClient, IPagesUpdateParametersBuilder builder)
+    : IExportClient
 {
-    private readonly INotionClient _client;
-
-    private readonly string _databaseId;
-
-    public NotionClient(string databaseId, INotionClient notionClient)
-    {
-        this._databaseId = databaseId;
-        this._client = notionClient;
-    }
+    private readonly IPagesUpdateParametersBuilder _builder = builder;
 
     public Task<Database> GetDatabase()
     {
-        return _client.Databases.RetrieveAsync(this._databaseId);
+        return notionClient.Databases.RetrieveAsync(databaseId);
     }
 
     public Task<PaginatedList<Page>> Query(Book book)
     {
-        return _client.Databases.QueryAsync(
-            this._databaseId,
+        return notionClient.Databases.QueryAsync(
+            databaseId,
             new DatabasesQueryParameters
             {
                 Filter = new TitleFilter("Title", equal: book.Title)
@@ -39,15 +32,14 @@ class NotionClient : IExportClient
         {
             var pages = await this.Query(book);
             Console.WriteLine($"Found {pages.Results.Count}");
-            
-            if (pages.Results.Any())
+
+            if (pages.Results.Count == 0)
             {
-                //TODO: Only update if clippings count differs. The current synced clipping count is available in the properties of the page
-                await this.UpdateBook(book, pages.Results[0]);
+                await CreateBook(book);
                 continue;
             }
-
-            await this.CreateBook(book);
+            
+            await UpdateBook(book, pages.Results[0]);
         }
 
         Console.WriteLine($"Export finished!");
@@ -55,7 +47,7 @@ class NotionClient : IExportClient
 
     private async Task CreateBook(Book book)
     {
-        var page = await _client.Pages.CreateAsync(this.GetCreateBuilder(book));
+        var page = await notionClient.Pages.CreateAsync(this.GetCreateBuilder(book));
         if (page?.Id == null)
         {
             Console.WriteLine($"Couldn't create page for book {book.Title} by {book.Author}");
@@ -71,7 +63,7 @@ class NotionClient : IExportClient
         return PagesCreateParametersBuilder.Create(
                 new DatabaseParentInput
                 {
-                    DatabaseId = this._databaseId
+                    DatabaseId = databaseId
                 }
             )
             .AddProperty("Title", new TitlePropertyValue
@@ -216,21 +208,20 @@ class NotionClient : IExportClient
         Console.WriteLine($"Book has already been synced. Therefore it's going to be updated.");
 
         book.LastSynchronized = DateTime.Now;
-        
-        var result = await _client.Pages.UpdateAsync(page.Id, GetUpdateBuilder(book, page));
+
+        var result = await notionClient.Pages.UpdateAsync(page.Id, GetUpdateParameters(book, page));
         if (result?.Id == null)
         {
             throw new Exception($"Properties of page ${page.Id} couldn't be updated.");
         }
         
-        //TODO: Only update if clippings count differs
-        var children = await this._client.Blocks.RetrieveChildrenAsync(page.Id);
+        var children = await notionClient.Blocks.RetrieveChildrenAsync(page.Id);
         foreach (var child in children.Results)
         {
-            await this._client.Blocks.DeleteAsync(child.Id);
+            await notionClient.Blocks.DeleteAsync(child.Id);
         }
 
-        await this._client.Blocks.AppendChildrenAsync(
+        await notionClient.Blocks.AppendChildrenAsync(
             page.Id,
             new BlocksAppendChildrenParameters()
             {
@@ -239,13 +230,18 @@ class NotionClient : IExportClient
         );
     }
 
-    private static PagesUpdateParameters GetUpdateBuilder(Book book, Page page)
+    private PagesUpdateParameters GetUpdateParameters(Book book, Page page)
     {
-        return PagesUpdateParametersBuilder.Create(page)
-            .AddOrUpdateProperty("Title", new TitlePropertyValue
+        page.Properties.Remove("LastEdited");
+        foreach (var property in page.Properties)
+        {
+            _builder.WithProperty(property.Key, property.Value);
+        }
+
+        _builder.WithProperty("Title", new TitlePropertyValue
             {
-                Title = new List<RichTextBase>()
-                {
+                Title =
+                [
                     new RichTextText()
                     {
                         Text = new Text
@@ -253,12 +249,12 @@ class NotionClient : IExportClient
                             Content = book.Title
                         }
                     }
-                }
+                ]
             })
-            .AddOrUpdateProperty("Author", new RichTextPropertyValue
+            .WithProperty("Author", new RichTextPropertyValue
             {
-                RichText = new List<RichTextBase>()
-                {
+                RichText =
+                [
                     new RichTextText()
                     {
                         Text = new Text
@@ -266,34 +262,26 @@ class NotionClient : IExportClient
                             Content = book.Author
                         }
                     }
-                }
+                ]
             })
-            .AddOrUpdateProperty("Highlights", new NumberPropertyValue
+            .WithProperty("Highlights", new NumberPropertyValue
             {
                 Number = book.Clippings.Count
             })
-            .AddOrUpdateProperty("Last Synced", new DatePropertyValue
+            .WithProperty("Last Synced", new DatePropertyValue
             {
                 Date = new Date
                 {
                     Start = book.LastSynchronized,
                 }
-            })
-            .SetIcon(
-                new EmojiObject
-                {
-                    Emoji = book.Emoji
-                }
-            )
-            .SetCover(
-                new ExternalFile
-                {
-                    External = new ExternalFile.Info
-                    {
-                        Url = book.Thumbnail
-                    }
-                }
-            )
-            .Build();
+            });
+
+        _builder.WithCover(page.Cover);
+        _builder.WithIcon(new EmojiObject
+        {
+            Emoji = book.Emoji
+        });
+
+        return _builder.Build();
     }
 }
