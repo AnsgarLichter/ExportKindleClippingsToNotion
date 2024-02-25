@@ -2,7 +2,7 @@
 
 namespace ExportKindleClippingsToNotion.Config;
 
-public class ConfigReader(IFileSystem fileSystem)
+public class ConfigReader(IFileSystem fileSystem): IConfigReader
 {
     public async Task<Config> ExecuteAsync(string pathToConfig)
     {
