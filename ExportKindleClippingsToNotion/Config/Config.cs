@@ -1,3 +1,3 @@
 namespace ExportKindleClippingsToNotion.Config;
 
-public record Config(string NotionAuthenticationToken, string NotionDatabaseId, string Language);
+public record Config(string NotionAuthenticationToken, string NotionDatabaseId);

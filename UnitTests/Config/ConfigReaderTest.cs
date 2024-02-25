@@ -15,7 +15,7 @@ public class ConfigReaderTest
         var fileSystem = A.Fake<IFileSystem>();
         const string pathToConfig = "valid_config.json";
         const string configContent =
-            "{\"NotionAuthenticationToken\": \"token\", \"NotionDatabaseId\": \"id\", \"Language\": \"en\"}";
+            "{\"NotionAuthenticationToken\": \"token\", \"NotionDatabaseId\": \"id\"}";
         A.CallTo(() => fileSystem.File.Exists(pathToConfig)).Returns(true);
         A.CallTo(() => fileSystem.File.ReadAllTextAsync(
             pathToConfig,
@@ -28,7 +28,6 @@ public class ConfigReaderTest
 
         Assert.Equal("token", config.NotionAuthenticationToken);
         Assert.Equal("id", config.NotionDatabaseId);
-        Assert.Equal("en", config.Language);
     }
 
     [Fact]
@@ -44,9 +43,8 @@ public class ConfigReaderTest
     }
 
     [Theory]
-    [InlineData("{\"NotionAuthenticationToken\": \"token\", \"Language\": \"en\"}")]
-    [InlineData("{\"NotionDatabaseId\": \"id\", \"Language\": \"en\"}")]
-    [InlineData("{\"NotionAuthenticationToken\": \"token\", \"NotionDatabaseId\": \"id\"}")]
+    [InlineData("{\"NotionAuthenticationToken\": \"token\"}")]
+    [InlineData("{\"NotionDatabaseId\": \"id\"}")]
     public async Task Execute_MissingField_ThrowsException(string configContent)
     {
         var fileSystem = A.Fake<IFileSystem>();

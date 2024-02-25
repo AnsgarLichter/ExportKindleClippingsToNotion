@@ -15,11 +15,10 @@ public class ConfigReader(IFileSystem fileSystem): IConfigReader
         var config = System.Text.Json.JsonSerializer.Deserialize<Config>(content);
         if (config is null
             || string.IsNullOrEmpty(config.NotionAuthenticationToken)
-            || string.IsNullOrEmpty(config.NotionDatabaseId)
-            || string.IsNullOrEmpty(config.Language))
+            || string.IsNullOrEmpty(config.NotionDatabaseId))
         {
             throw new Exception(
-                "Please provide an authentication token, your database id and your language in the config file");
+                "Please provide an authentication token and your database id in the config file");
         }
 
         return config;
