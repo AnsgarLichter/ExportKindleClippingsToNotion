@@ -2,11 +2,11 @@ namespace ExportKindleClippingsToNotion.Model;
 
 public class Clipping
 {
-    public string? Text { get; set; }
-    public int StartPosition { get; set; }
-    public int FinishPosition { get; set; }
-    public int Page { get; set; }
-    public DateTime HighlightDate { get; set; }
+    public string? Text { get; }
+    public int StartPosition { get; }
+    public int FinishPosition { get; }
+    public int Page { get; }
+    public DateTime HighlightDate { get; }
     public Book? Book { get; set; }
 
     public Clipping(string text, int startPosition, int finishPosition, int page, DateTime highlightDate)
@@ -25,7 +25,7 @@ public class Clipping
             return false;
         }
 
-        Clipping clipping = (Clipping)obj;
+        var clipping = (Clipping)obj;
         return Text == clipping.Text
                && StartPosition == clipping.StartPosition
                && FinishPosition == clipping.FinishPosition
@@ -36,7 +36,7 @@ public class Clipping
 
     public override int GetHashCode()
     {
-        return (Text, StartPosition, FinishPosition, Page, HighlightDate, Book).GetHashCode();
+        return (Text, StartPosition, FinishPosition, Page, HighlightDate).GetHashCode();
     }
 
     public override string ToString()

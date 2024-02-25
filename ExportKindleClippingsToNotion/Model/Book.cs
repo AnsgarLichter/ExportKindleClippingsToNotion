@@ -1,22 +1,15 @@
 namespace ExportKindleClippingsToNotion.Model;
 
-public class Book
+public class Book(string author, string title)
 {
-    public string? Author { get; set; }
-    public string? Title { get; set; }
+    public string? Author { get; } = author;
+    public string? Title { get; } = title;
 
     public string? Thumbnail { get; set; }
 
-    public string Emoji { get; set; } = "📖";
+    public string Emoji => "📖";
     public DateTime? LastSynchronized { get; set; }
-    public int? Highlights { get; set; }
-    public List<Clipping> Clippings { get; set; } = new List<Clipping>();
-
-    public Book(string author, string title)
-    {
-        this.Author = author;
-        this.Title = title;
-    }
+    public List<Clipping> Clippings { get; } = [];
 
     public void AddClipping(Clipping clipping)
     {
@@ -35,7 +28,7 @@ public class Book
             return false;
         }
 
-        Book book = (Book)obj;
+        var book = (Book)obj;
         return book.Author == this.Author && book.Title == this.Title;
     }
 

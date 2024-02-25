@@ -1,42 +1,44 @@
-﻿using ExportKindleClippingsToNotion.Config;
+﻿using System.IO.Abstractions;
+using ExportKindleClippingsToNotion.Config;
 using ExportKindleClippingsToNotion.Export;
 using ExportKindleClippingsToNotion.Import;
 using ExportKindleClippingsToNotion.Import.Metadata;
+using ExportKindleClippingsToNotion.Notion.Utils;
 using ExportKindleClippingsToNotion.Parser;
 using Notion.Client;
+using BooksService = ExportKindleClippingsToNotion.Import.Metadata.BooksService;
 using NotionClient = ExportKindleClippingsToNotion.Notion.NotionClient;
 
 const string pathToConfig = "../params.json";
-//TODO: Use logger in real architecture that writes the log to the console
 if (args.Length == 0)
 {
     Console.WriteLine("Please provide a path to your clippings file");
     return;
 }
 
-var pathToClippings = args[0];
-if (!File.Exists(pathToClippings))
-{
-    Console.WriteLine($"Clippings File doesn't exist. Please check your path '{pathToClippings}'");
-    return;
-}
-
 try
 {
-    var config = new Config(pathToConfig);
-
-    var client = new NotionClient(config.NotionAuthenticationToken, config.NotionDatabaseId);
-    var metadataFetcher = new GoogleBooksClient();
-    var clippingsParser = new ClippingsParser();
-
-    var importer = new Importer(new FileClient());
-    var booksParser = new BooksParser(metadataFetcher, clippingsParser);
+    var fileSystem = new FileSystem();
+    var configReader = new ConfigReader(fileSystem);
+    var config = await configReader.ExecuteAsync(pathToConfig);
+    
+    var notionClient = NotionClientFactory.Create(
+        new ClientOptions
+        {
+            AuthToken = config.NotionAuthenticationToken
+        }
+    );
+    var client = new NotionClient(config.NotionDatabaseId, notionClient, new PagesUpdateParametersBuilder());
+    var importer = new Importer(new FileClient(fileSystem));
     var exporter = new Exporter(client);
-
-    //TODO: Validate if importer & parser are actually working
-    var clippings = await importer.Import(pathToClippings);
-    var books = await booksParser.Parse(clippings);
-    await exporter.Export(books);
+    
+    var metadataFetcher = new GoogleBooksClient(new BooksService());
+    var clippingsParser = new ClippingsParserGerman();
+    var booksParser = new BooksParser(metadataFetcher, clippingsParser);
+    
+    var exportKindleClippingsToNotion = new ExportKindleClippingsToNotion.ExportKindleClippingsToNotion(importer, booksParser, exporter);
+    var pathToClippings = args[0];
+    await exportKindleClippingsToNotion.ExecuteAsync(pathToClippings);
 }
 catch (NotionApiException notionApiException)
 {

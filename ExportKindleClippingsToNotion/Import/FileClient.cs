@@ -1,20 +1,21 @@
-﻿namespace ExportKindleClippingsToNotion.Import;
+﻿using System.IO.Abstractions;
 
-public class FileClient : IImportClient
+namespace ExportKindleClippingsToNotion.Import;
+
+public class FileClient(IFileSystem fileSystem) : IImportClient
 {
-
-    public Task<string[]> Import(string pathToClippings)
+    public async Task<string[]> Import(string pathToClippings)
     {
-        return Task.FromResult(GetFormattedClippings(pathToClippings));
+        return await GetFormattedClippings(pathToClippings);
     }
 
-    private static string[] GetFormattedClippings(string pathToClippings)
+    private async Task<string[]> GetFormattedClippings(string pathToClippings)
     {
-        var clippingsText = File.ReadAllText(pathToClippings);
+        var clippingsText = await fileSystem.File.ReadAllTextAsync(pathToClippings);
         return FormatClippings(clippingsText);
     }
 
-    private static string[] FormatClippings(string clippingsText)
+    private string[] FormatClippings(string clippingsText)
     {
         var clippings = clippingsText.Split($"==========\r\n");
         Console.WriteLine($"Determined {clippings.Length} clippings");
