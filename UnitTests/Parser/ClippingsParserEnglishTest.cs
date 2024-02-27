@@ -8,22 +8,22 @@ namespace UnitTests.Parser;
 public class ClippingsParserEnglishTest
 {
     [Fact]
-    public async Task ReturnsNullForAnInvalidClipping()
+    public void ReturnsNullForAnInvalidClipping()
     {
         var parser = new ClippingsParserEnglish();
         const string clipping = "line1\nline2\nline3";
 
-        Assert.Null(await parser.ParseAsync(clipping));
+        Assert.Null(parser.Parse(clipping));
     }
 
     [Theory]
     [ClassData(typeof(ValidEnglishClippingTestData))]
-    public async Task ReturnsAValidClipping(string clipping, string expectedAuthor, string expectedTitle,
+    public void ReturnsAValidClipping(string clipping, string expectedAuthor, string expectedTitle,
         int expectedStartPosition, int expectedFinishPosition, int expectedPage, DateTime expectedHighlightDate,
         string expectedText)
     {
         var parser = new ClippingsParserEnglish();
-        var result = await parser.ParseAsync(clipping);
+        var result = parser.Parse(clipping);
 
         Assert.NotNull(result);
         Assert.Equal(expectedAuthor, result.Author);
@@ -38,12 +38,12 @@ public class ClippingsParserEnglishTest
 
     [Theory]
     [ClassData(typeof(InvalidEnglishClippingTestData))]
-    public async Task ReturnsBestMatchForInValidClipping(string clipping, string expectedAuthor, string expectedTitle,
+    public void ReturnsBestMatchForInValidClipping(string clipping, string expectedAuthor, string expectedTitle,
         int expectedStartPosition, int expectedFinishPosition, int expectedPage, DateTime expectedHighlightDate,
         string expectedText)
     {
         var parser = new ClippingsParserEnglish();
-        var result = await parser.ParseAsync(clipping);
+        var result = parser.Parse(clipping);
 
         Assert.NotNull(result);
         Assert.Equal(expectedAuthor, result.Author);
@@ -57,12 +57,12 @@ public class ClippingsParserEnglishTest
     }
     
     [Fact]
-    public async Task ReturnsNullIfLimitHasBeenReached()
+    public void ReturnsNullIfLimitHasBeenReached()
     {
         var clipping = "How To Win Friends and Influence People (Carnegie, Dale)\n- Your Highlight on page 79 | location 1293-1295 | Added on Tuesday, 30 August 2022 19:31:58\n\n <You have reached the clipping limit for this item> ";
         var parser = new ClippingsParserEnglish();
 
-        Assert.Null(await parser.ParseAsync(clipping));
+        Assert.Null(parser.Parse(clipping));
     }
     
 }

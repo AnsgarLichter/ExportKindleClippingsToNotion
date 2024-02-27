@@ -18,7 +18,7 @@ public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser 
 
         foreach (var clipping in clippings)
         {
-            var dto = await clippingsParser.ParseAsync(clipping);
+            var dto = clippingsParser.Parse(clipping);
             if (dto?.Clipping == null || dto?.Author == null || dto?.Title == null)
             {
                 continue;

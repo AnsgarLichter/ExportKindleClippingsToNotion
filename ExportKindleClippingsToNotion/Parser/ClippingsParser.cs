@@ -5,13 +5,13 @@ namespace ExportKindleClippingsToNotion.Parser;
 
 public abstract class ClippingsParser(ClippingsLanguageConfiguration languageConfiguration) : IClippingsParser
 {
-    public Task<ClippingDto?> ParseAsync(string clipping)
+    public ClippingDto? Parse(string clipping)
     {
         var lines = clipping.Split("\n");
         if (lines.Length < 4)
         {
             Console.WriteLine("Found an invalid clipping. Parsing next one ...");
-            return Task.FromResult<ClippingDto?>(null);
+            return null;
         }
         
         var lineTitleAndAuthor = lines[0];
@@ -28,7 +28,7 @@ public abstract class ClippingsParser(ClippingsLanguageConfiguration languageCon
         if (languageConfiguration.ClippingsLimitReached.IsMatch(text))
         {
             Console.WriteLine("Skipping clipping because limit has been reached");
-            return Task.FromResult<ClippingDto?>(null);
+            return null;
         }
 
         Console.WriteLine(
@@ -41,6 +41,6 @@ public abstract class ClippingsParser(ClippingsLanguageConfiguration languageCon
             !string.IsNullOrEmpty(page) ? int.Parse(page) : 0,
             dateTime
         );
-        return Task.FromResult<ClippingDto?>(new ClippingDto(parsedClipping, author, title));
+        return new ClippingDto(parsedClipping, author, title);
     }
 }

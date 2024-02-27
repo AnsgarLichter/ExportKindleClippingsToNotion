@@ -17,7 +17,7 @@ public class BooksParserTest
         var clippingsParserMock = A.Fake<IClippingsParser>();
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
-        A.CallTo(() => clippingsParserMock.ParseAsync(A<string>.Ignored))!.ReturnsNextFromSequence(
+        A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.ReturnsNextFromSequence(
             new ClippingDto(new Clipping(
                     "text1",
                     1,
@@ -75,7 +75,7 @@ public class BooksParserTest
         var clippingsParserMock = A.Fake<IClippingsParser>();
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
-        A.CallTo(() => clippingsParserMock.ParseAsync(A<string>.Ignored))!.ReturnsNextFromSequence(
+        A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.ReturnsNextFromSequence(
             new ClippingDto(new Clipping(
                     "text1",
                     1,
@@ -133,7 +133,7 @@ public class BooksParserTest
         var clippingsParserMock = A.Fake<IClippingsParser>();
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
-        A.CallTo(() => clippingsParserMock.ParseAsync(A<string>.Ignored))!.ReturnsNextFromSequence(
+        A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.ReturnsNextFromSequence(
             new ClippingDto(new Clipping(
                     "text1",
                     1,
@@ -198,7 +198,7 @@ public class BooksParserTest
         var clippingsParserMock = A.Fake<IClippingsParser>();
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
-        A.CallTo(() => clippingsParserMock.ParseAsync(A<string>.Ignored))!.Returns((ClippingDto?)null);
+        A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.Returns((ClippingDto?)null);
         A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
@@ -217,7 +217,7 @@ public class BooksParserTest
         var clippingsParserMock = A.Fake<IClippingsParser>();
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
-        A.CallTo(() => clippingsParserMock.ParseAsync(A<string>.Ignored))!.Returns((ClippingDto?)new ClippingDto(null, "author", "title"));
+        A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.Returns((ClippingDto?)new ClippingDto(null, "author", "title"));
         A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
@@ -236,7 +236,7 @@ public class BooksParserTest
         var clippingsParserMock = A.Fake<IClippingsParser>();
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
-        A.CallTo(() => clippingsParserMock.ParseAsync(A<string>.Ignored))!.Returns((ClippingDto?)new ClippingDto(new Clipping("text", 1, 1, 1 , new DateTime()), null, "title"));
+        A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.Returns((ClippingDto?)new ClippingDto(new Clipping("text", 1, 1, 1 , new DateTime()), null, "title"));
         A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
@@ -255,7 +255,7 @@ public class BooksParserTest
         var clippingsParserMock = A.Fake<IClippingsParser>();
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
-        A.CallTo(() => clippingsParserMock.ParseAsync(A<string>.Ignored))!.Returns((ClippingDto?)new ClippingDto(new Clipping("text", 1, 1, 1 , new DateTime()), "author", null));
+        A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.Returns((ClippingDto?)new ClippingDto(new Clipping("text", 1, 1, 1 , new DateTime()), "author", null));
         A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
