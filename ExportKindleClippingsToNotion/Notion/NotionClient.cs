@@ -29,7 +29,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
     {
         foreach (var book in books)
         {
-            var pages = await this.Query(book);
+            var pages = await Query(book);
             Console.WriteLine($"Found {pages.Results.Count}");
 
             if (pages.Results.Count == 0)
@@ -46,7 +46,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
 
     private async Task CreateBookAsync(Book book)
     {
-        var page = await notionClient.Pages.CreateAsync(this.GetCreateBuilder(book));
+        var page = await notionClient.Pages.CreateAsync(GetCreateBuilder(book));
         if (page?.Id == null)
         {
             Console.WriteLine($"Couldn't create page for book {book.Title} by {book.Author}");
@@ -117,7 +117,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
                     }
                 }
             )
-            .AddPageContent(this.CreateClippingsTable(book))
+            .AddPageContent(CreateClippingsTable(book))
             .Build();
     }
 
@@ -224,7 +224,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
             page.Id,
             new BlocksAppendChildrenParameters()
             {
-                Children = new[] { this.CreateClippingsTable(book) }
+                Children = new[] { CreateClippingsTable(book) }
             }
         );
     }
