@@ -9,11 +9,13 @@ public class ClippingTest
     [Fact]
     public void TestClipping()
     {
-        var clipping = new Clipping("text", 1, 2, 3, DateTime.Now);
+        var book = new Book("author", "title");
+        var clipping = new Clipping("text", 1, 2, 3, DateTime.Now, book);
         Assert.Equal("text", clipping.Text);
         Assert.Equal(1, clipping.StartPosition);
         Assert.Equal(2, clipping.FinishPosition);
         Assert.Equal(3, clipping.Page);
         Assert.Equal(DateTime.Now.Date, clipping.HighlightDate.Date);
+        Assert.Equal(book, clipping.Book);
     }
 }

@@ -18,21 +18,21 @@ public class BooksParserTest
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
         A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.ReturnsNextFromSequence(
-            new ClippingDto(new Clipping(
-                    "text1",
-                    1,
-                    2,
-                    1,
-                    new DateTime(2024, 02, 19, 21, 20, 00)),
+            new ClippingDto(
+                "text1",
+                1,
+                2,
+                1,
+                new DateTime(2024, 02, 19, 21, 20, 00),
                 "author",
                 "title"
             ),
-            new ClippingDto(new Clipping(
-                    "text2",
-                    1,
-                    2,
-                    1,
-                    new DateTime(2024, 02, 19, 21, 20, 00)),
+            new ClippingDto(
+                "text2",
+                1,
+                2,
+                1,
+                new DateTime(2024, 02, 19, 21, 20, 00),
                 "author",
                 "title"
             )
@@ -76,21 +76,21 @@ public class BooksParserTest
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
         A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.ReturnsNextFromSequence(
-            new ClippingDto(new Clipping(
-                    "text1",
-                    1,
-                    2,
-                    1,
-                    new DateTime(2024, 02, 19, 21, 20, 00)),
+            new ClippingDto(
+                "text1",
+                1,
+                2,
+                1,
+                new DateTime(2024, 02, 19, 21, 20, 00),
                 "author",
                 "title"
             ),
-            new ClippingDto(new Clipping(
-                    "text2",
-                    1,
-                    2,
-                    1,
-                    new DateTime(2024, 02, 19, 21, 20, 00)),
+            new ClippingDto(
+                "text2",
+                1,
+                2,
+                1,
+                new DateTime(2024, 02, 19, 21, 20, 00),
                 "author",
                 "title"
             )
@@ -134,21 +134,21 @@ public class BooksParserTest
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
         A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.ReturnsNextFromSequence(
-            new ClippingDto(new Clipping(
-                    "text1",
-                    1,
-                    2,
-                    1,
-                    new DateTime(2024, 02, 19, 21, 20, 00)),
+            new ClippingDto(
+                "text1",
+                1,
+                2,
+                1,
+                new DateTime(2024, 02, 19, 21, 20, 00),
                 "author1",
                 "title1"
             ),
-            new ClippingDto(new Clipping(
-                    "text2",
-                    1,
-                    2,
-                    1,
-                    new DateTime(2024, 02, 19, 21, 20, 00)),
+            new ClippingDto(
+                "text2",
+                1,
+                2,
+                1,
+                new DateTime(2024, 02, 19, 21, 20, 00),
                 "author2",
                 "title2"
             )
@@ -190,7 +190,7 @@ public class BooksParserTest
         Assert.Equal(2, clippingsEnumerator.Current.FinishPosition);
         Assert.Equal(1, clippingsEnumerator.Current.Page);
     }
-    
+
     [Fact]
     public async Task ReturnsNullForInvalidClippings()
     {
@@ -209,7 +209,7 @@ public class BooksParserTest
 
         Assert.Empty(result);
     }
-    
+
     [Fact]
     public async Task ReturnsNullForClippingsWithoutMarkedText()
     {
@@ -217,7 +217,16 @@ public class BooksParserTest
         var clippingsParserMock = A.Fake<IClippingsParser>();
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
-        A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.Returns((ClippingDto?)new ClippingDto(null, "author", "title"));
+        A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.Returns(
+            (ClippingDto?)new ClippingDto(
+                "",
+                1,
+                1,
+                1,
+                new DateTime(2024, 02, 27),
+                "author",
+                "title"
+            ));
         A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
@@ -228,7 +237,7 @@ public class BooksParserTest
 
         Assert.Empty(result);
     }
-    
+
     [Fact]
     public async Task ReturnsNullForClippingsWithoutAuthor()
     {
@@ -236,7 +245,16 @@ public class BooksParserTest
         var clippingsParserMock = A.Fake<IClippingsParser>();
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
-        A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.Returns((ClippingDto?)new ClippingDto(new Clipping("text", 1, 1, 1 , new DateTime()), null, "title"));
+        A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.Returns(
+            (ClippingDto?)new ClippingDto(
+                "text",
+                1,
+                1,
+                1,
+                new DateTime(2024, 02, 27),
+                null,
+                "title"
+            ));
         A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
@@ -247,7 +265,7 @@ public class BooksParserTest
 
         Assert.Empty(result);
     }
-    
+
     [Fact]
     public async Task ReturnsNullForClippingsWithoutTitle()
     {
@@ -255,7 +273,16 @@ public class BooksParserTest
         var clippingsParserMock = A.Fake<IClippingsParser>();
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
-        A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.Returns((ClippingDto?)new ClippingDto(new Clipping("text", 1, 1, 1 , new DateTime()), "author", null));
+        A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.Returns(
+            (ClippingDto?)new ClippingDto(
+                "text",
+                1,
+                1,
+                1,
+                new DateTime(),
+                "author",
+                null
+            ));
         A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]

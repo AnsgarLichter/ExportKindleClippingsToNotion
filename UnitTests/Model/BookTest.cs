@@ -34,7 +34,7 @@ public class BookTest
     public void AddClipping_AddsClippingToList()
     {
         var book = new Book("Author", "Title");
-        var clipping = new Clipping("text", 1, 2, 3, new DateTime(2022, 1, 1));
+        var clipping = new Clipping("text", 1, 2, 3, new DateTime(2022, 1, 1), book);
 
         book.AddClipping(clipping);
 
@@ -45,7 +45,7 @@ public class BookTest
     public void AddClipping_DoesNotAddDuplicateClipping()
     {
         var book = new Book("Author", "Title");
-        var clipping = new Clipping("text", 1, 2, 3, new DateTime(2022, 1, 1));
+        var clipping = new Clipping("text", 1, 2, 3, new DateTime(2022, 1, 1), book);
 
         book.AddClipping(clipping);
         book.AddClipping(clipping);

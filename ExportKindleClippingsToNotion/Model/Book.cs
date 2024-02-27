@@ -2,6 +2,7 @@ namespace ExportKindleClippingsToNotion.Model;
 
 public record Book(string Author, string Title)
 {
+    // TODO: Add validation of thumbnail in setter
     public string? Thumbnail { get; set; }
 
     public string Emoji => "📖";

@@ -54,7 +54,7 @@ public class NotionClientTest
         var notionClient = new NotionClient("databaseId", notionClientMock, pagesUpdateParametersBuilderMock);
         var book = new Book("Author", "Title")
         {
-            Clippings = { new Clipping("text", 1, 2, 3, DateTime.Now) }
+            Clippings = { new Clipping("text", 1, 2, 3, DateTime.Now, new Book("author", "title")) }
         };
         var books = new List<Book> { book };
 

@@ -19,7 +19,7 @@ public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser 
         foreach (var clipping in clippings)
         {
             var dto = clippingsParser.Parse(clipping);
-            if (dto?.Clipping == null || dto?.Author == null || dto?.Title == null)
+            if (dto?.Text == null || dto?.Text.Trim().Length == 0 || dto?.Author == null || dto?.Title == null)
             {
                 continue;
             }
@@ -32,9 +32,16 @@ public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser 
                 books.Add(book);
             }
 
-            dto.Clipping.Book = book;
-            book.AddClipping(dto.Clipping);
-            parsedClippings.Add(dto.Clipping);
+            var parsedClipping = new Clipping(
+                dto.Text,
+                dto.StartPosition,
+                dto.FinishPosition,
+                dto.Page,
+                dto.HighlightDate,
+                book
+            );
+            book.AddClipping(parsedClipping);
+            parsedClippings.Add(parsedClipping);
         }
 
         Console.WriteLine($"Parsed {books.Count} books");

@@ -28,12 +28,11 @@ public class ClippingsParserGermanTest
         Assert.NotNull(result);
         Assert.Equal(expectedAuthor, result.Author);
         Assert.Equal(expectedTitle, result.Title);
-        Assert.NotNull(result.Clipping);
-        Assert.Equal(expectedStartPosition, result.Clipping.StartPosition);
-        Assert.Equal(expectedFinishPosition, result.Clipping.FinishPosition);
-        Assert.Equal(expectedPage, result.Clipping.Page);
-        Assert.Equal(expectedHighlightDate, result.Clipping.HighlightDate);
-        Assert.Equal(expectedText, result.Clipping.Text);
+        Assert.Equal(expectedStartPosition, result.StartPosition);
+        Assert.Equal(expectedFinishPosition, result.FinishPosition);
+        Assert.Equal(expectedPage, result.Page);
+        Assert.Equal(expectedHighlightDate, result.HighlightDate);
+        Assert.Equal(expectedText, result.Text);
     }
     
     [Theory]
@@ -48,12 +47,11 @@ public class ClippingsParserGermanTest
         Assert.NotNull(result);
         Assert.Equal(expectedAuthor, result.Author);
         Assert.Equal(expectedTitle, result.Title);
-        Assert.NotNull(result.Clipping);
-        Assert.Equal(expectedStartPosition, result.Clipping.StartPosition);
-        Assert.Equal(expectedFinishPosition, result.Clipping.FinishPosition);
-        Assert.Equal(expectedPage, result.Clipping.Page);
-        Assert.Equal(expectedHighlightDate, result.Clipping.HighlightDate);
-        Assert.Equal(expectedText, result.Clipping.Text);
+        Assert.Equal(expectedStartPosition, result.StartPosition);
+        Assert.Equal(expectedFinishPosition, result.FinishPosition);
+        Assert.Equal(expectedPage, result.Page);
+        Assert.Equal(expectedHighlightDate, result.HighlightDate);
+        Assert.Equal(expectedText, result.Text);
     }
     
     [Fact]
