@@ -2,7 +2,7 @@ namespace ExportKindleClippingsToNotion.Model;
 
 public record Clipping
 {
-    public string? Text { get; }
+    public string Text { get; }
     public int StartPosition { get; }
     public int FinishPosition { get; }
     public int Page { get; }
