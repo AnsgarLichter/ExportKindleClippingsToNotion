@@ -74,7 +74,7 @@ public class NotionClientTest
                 A<CancellationToken>.Ignored));
         updateAsyncMock.Returns(Task.FromResult(new Page()));
 
-        await notionClient.Export(books);
+        await notionClient.ExportAsync(books);
 
         queryAsyncMock.MustHaveHappenedOnceExactly();
         createAsyncMock.MustHaveHappenedOnceExactly();
@@ -154,7 +154,7 @@ public class NotionClientTest
                 A<CancellationToken>.Ignored
             )).Returns(Task.FromResult(new PaginatedList<IBlock>()));
 
-        await notionClient.Export(books);
+        await notionClient.ExportAsync(books);
 
         updateAsyncMock.MustHaveHappenedOnceExactly();
     }
@@ -216,7 +216,7 @@ public class NotionClientTest
                 A<CancellationToken>.Ignored
             )).Returns(Task.FromResult(new PaginatedList<IBlock>()));
 
-        await Assert.ThrowsAsync<Exception>(() => notionClient.Export(books));
+        await Assert.ThrowsAsync<Exception>(() => notionClient.ExportAsync(books));
 
         updateAsyncMock.MustHaveHappenedOnceExactly();
     }

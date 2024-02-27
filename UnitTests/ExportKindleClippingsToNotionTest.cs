@@ -27,7 +27,7 @@ public class ExportKindleClippingsToNotionTest
             new Book("author3", "title3")
         };
 
-        A.CallTo(() => importer.Import(clippingsPath)).Returns(Task.FromResult(clippings));
+        A.CallTo(() => importer.ImportAsync(clippingsPath)).Returns(Task.FromResult(clippings));
         A.CallTo(() => booksParser.ParseAsync(clippings)).Returns(books);
 
         var exportKindleClippingsToNotion =
@@ -35,8 +35,8 @@ public class ExportKindleClippingsToNotionTest
 
         await exportKindleClippingsToNotion.ExecuteAsync(clippingsPath);
         
-        A.CallTo(() => importer.Import(clippingsPath)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => importer.ImportAsync(clippingsPath)).MustHaveHappenedOnceExactly();
         A.CallTo(() => booksParser.ParseAsync(clippings)).MustHaveHappenedOnceExactly();
-        A.CallTo(() => exporter.Export(books)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => exporter.ExportAsync(books)).MustHaveHappenedOnceExactly();
     }
 }

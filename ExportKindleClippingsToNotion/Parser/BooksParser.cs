@@ -8,10 +8,10 @@ public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser 
 {
     public async Task<List<Book>> ParseAsync(IEnumerable<string> clippings)
     {
-        return await ParseBooks(clippings);
+        return await ParseBooksAsync(clippings);
     }
 
-    private async Task<List<Book>> ParseBooks(IEnumerable<string> clippings)
+    private async Task<List<Book>> ParseBooksAsync(IEnumerable<string> clippings)
     {
         var books = new List<Book>();
         var parsedClippings = new List<Clipping>();
@@ -28,7 +28,7 @@ public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser 
             if (book is null)
             {
                 book = new Book(dto.Author, dto.Title);
-                await AddThumbnail(book);
+                await AddThumbnailAsync(book);
                 books.Add(book);
             }
 
@@ -43,9 +43,9 @@ public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser 
         return books;
     }
 
-    private async Task AddThumbnail(Book book)
+    private async Task AddThumbnailAsync(Book book)
     {
-        book.Thumbnail = await metadataFetcher.SearchThumbnail(book);
+        book.Thumbnail = await metadataFetcher.SearchThumbnailAsync(book);
         if (book.Thumbnail == null || book.Thumbnail.Trim().Length == 0)
         {
             //TODO: Use fallback image

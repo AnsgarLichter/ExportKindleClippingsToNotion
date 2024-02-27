@@ -4,12 +4,12 @@ namespace ExportKindleClippingsToNotion.Import;
 
 public class FileClient(IFileSystem fileSystem) : IImportClient
 {
-    public async Task<string[]> Import(string pathToClippings)
+    public async Task<string[]> ImportAsync(string pathToClippings)
     {
-        return await GetFormattedClippings(pathToClippings);
+        return await GetFormattedClippingsAsync(pathToClippings);
     }
 
-    private async Task<string[]> GetFormattedClippings(string pathToClippings)
+    private async Task<string[]> GetFormattedClippingsAsync(string pathToClippings)
     {
         var clippingsText = await fileSystem.File.ReadAllTextAsync(pathToClippings);
         return FormatClippings(clippingsText);

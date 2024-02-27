@@ -43,7 +43,7 @@ public class GoogleBooksClientTest
         A.CallTo(() => _booksServiceMock.ExecuteVolumesListRequestAsync("intitle:title+inauthor:author"))
             .Returns(volumes);
         
-        var result = await _testSubject.SearchThumbnail(book);
+        var result = await _testSubject.SearchThumbnailAsync(book);
         
         Assert.Equal(thumbnailUrl, result);
     }
@@ -61,7 +61,7 @@ public class GoogleBooksClientTest
         A.CallTo(() => _booksServiceMock.ExecuteVolumesListRequestAsync("intitle:title+inauthor:author"))
             .Returns(volumes);
         
-        var result = await _testSubject.SearchThumbnail(book);
+        var result = await _testSubject.SearchThumbnailAsync(book);
         
         Assert.Null(result);
     }

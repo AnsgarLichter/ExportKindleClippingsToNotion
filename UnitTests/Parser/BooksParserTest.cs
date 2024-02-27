@@ -37,7 +37,7 @@ public class BooksParserTest
                 "title"
             )
         );
-        A.CallTo(() => metadataFetcherMock.SearchThumbnail(A<Book>.Ignored)).Returns((string?)null);
+        A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
         {
@@ -95,7 +95,7 @@ public class BooksParserTest
                 "title"
             )
         );
-        A.CallTo(() => metadataFetcherMock.SearchThumbnail(A<Book>.Ignored)).Returns((string?)"thumbnail");
+        A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)"thumbnail");
 
         var result = await booksParser.ParseAsync(new[]
         {
@@ -153,7 +153,7 @@ public class BooksParserTest
                 "title2"
             )
         );
-        A.CallTo(() => metadataFetcherMock.SearchThumbnail(A<Book>.Ignored)).Returns((string?)null);
+        A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
         {
@@ -199,7 +199,7 @@ public class BooksParserTest
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
         A.CallTo(() => clippingsParserMock.ParseAsync(A<string>.Ignored))!.Returns((ClippingDto?)null);
-        A.CallTo(() => metadataFetcherMock.SearchThumbnail(A<Book>.Ignored)).Returns((string?)null);
+        A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
         {
@@ -218,7 +218,7 @@ public class BooksParserTest
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
         A.CallTo(() => clippingsParserMock.ParseAsync(A<string>.Ignored))!.Returns((ClippingDto?)new ClippingDto(null, "author", "title"));
-        A.CallTo(() => metadataFetcherMock.SearchThumbnail(A<Book>.Ignored)).Returns((string?)null);
+        A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
         {
@@ -237,7 +237,7 @@ public class BooksParserTest
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
         A.CallTo(() => clippingsParserMock.ParseAsync(A<string>.Ignored))!.Returns((ClippingDto?)new ClippingDto(new Clipping("text", 1, 1, 1 , new DateTime()), null, "title"));
-        A.CallTo(() => metadataFetcherMock.SearchThumbnail(A<Book>.Ignored)).Returns((string?)null);
+        A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
         {
@@ -256,7 +256,7 @@ public class BooksParserTest
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
         A.CallTo(() => clippingsParserMock.ParseAsync(A<string>.Ignored))!.Returns((ClippingDto?)new ClippingDto(new Clipping("text", 1, 1, 1 , new DateTime()), "author", null));
-        A.CallTo(() => metadataFetcherMock.SearchThumbnail(A<Book>.Ignored)).Returns((string?)null);
+        A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
         {

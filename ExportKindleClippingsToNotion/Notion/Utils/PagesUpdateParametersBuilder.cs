@@ -50,7 +50,7 @@ public class PagesUpdateParametersBuilder : IPagesUpdateParametersBuilder
 
     public IPagesUpdateParametersBuilder Reset()
     {
-        _properties = new();
+        _properties = new Dictionary<string, PropertyValue>();
         _cover = null;
         _icon = null;
         _isArchived = false;

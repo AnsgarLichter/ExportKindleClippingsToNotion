@@ -8,7 +8,6 @@ namespace ExportKindleClippingsToNotion.Notion;
 public class NotionClient(string databaseId, INotionClient notionClient, IPagesUpdateParametersBuilder builder)
     : IExportClient
 {
-    private readonly IPagesUpdateParametersBuilder _builder = builder;
 
     public Task<Database> GetDatabase()
     {
@@ -26,7 +25,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
         );
     }
 
-    public async Task Export(List<Book> books)
+    public async Task ExportAsync(List<Book> books)
     {
         foreach (var book in books)
         {
@@ -35,17 +34,17 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
 
             if (pages.Results.Count == 0)
             {
-                await CreateBook(book);
+                await CreateBookAsync(book);
                 continue;
             }
             
-            await UpdateBook(book, pages.Results[0]);
+            await UpdateBookAsync(book, pages.Results[0]);
         }
 
         Console.WriteLine($"Export finished!");
     }
 
-    private async Task CreateBook(Book book)
+    private async Task CreateBookAsync(Book book)
     {
         var page = await notionClient.Pages.CreateAsync(this.GetCreateBuilder(book));
         if (page?.Id == null)
@@ -203,7 +202,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
         };
     }
 
-    private async Task UpdateBook(Book book, Page page)
+    private async Task UpdateBookAsync(Book book, Page page)
     {
         Console.WriteLine($"Book has already been synced. Therefore it's going to be updated.");
 
@@ -235,10 +234,10 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
         page.Properties.Remove("LastEdited");
         foreach (var property in page.Properties)
         {
-            _builder.WithProperty(property.Key, property.Value);
+            builder.WithProperty(property.Key, property.Value);
         }
 
-        _builder.WithProperty("Title", new TitlePropertyValue
+        builder.WithProperty("Title", new TitlePropertyValue
             {
                 Title =
                 [
@@ -276,12 +275,12 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
                 }
             });
 
-        _builder.WithCover(page.Cover);
-        _builder.WithIcon(new EmojiObject
+        builder.WithCover(page.Cover);
+        builder.WithIcon(new EmojiObject
         {
             Emoji = book.Emoji
         });
 
-        return _builder.Build();
+        return builder.Build();
     }
 }

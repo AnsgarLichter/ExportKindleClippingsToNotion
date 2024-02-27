@@ -11,8 +11,8 @@ public class ClippingsLanguage()
     private readonly Dictionary<SupportedLanguages, string> _languageIdentifiers =
         new()
         {
-            { SupportedLanguages.English, "Your Highlight on page" },
-            { SupportedLanguages.German, "Ihre Markierung bei Position" }
+            { SupportedLanguages.English, EnglishClipping },
+            { SupportedLanguages.German, GermanClipping }
         };
 
     public SupportedLanguages Determine(string clipping)
