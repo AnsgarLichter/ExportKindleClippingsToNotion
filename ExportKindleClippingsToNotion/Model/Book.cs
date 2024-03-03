@@ -2,13 +2,12 @@ namespace ExportKindleClippingsToNotion.Model;
 
 public record Book(string Author, string Title)
 {
-    // TODO: Add validation of thumbnail in setter
     
-    private string? _thumbnailUrl;
+    private readonly string? _thumbnailUrl;
     public string? ThumbnailUrl
     {
         get => _thumbnailUrl;
-        set => _thumbnailUrl = Uri.IsWellFormedUriString(value, UriKind.Absolute) ? value : null;
+        init => _thumbnailUrl = Uri.IsWellFormedUriString(value, UriKind.Absolute) ? value : null;
     }
 
     public string Emoji => "📖";

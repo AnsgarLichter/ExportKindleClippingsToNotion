@@ -8,7 +8,7 @@ using ExportKindleClippingsToNotion.Parser;
 using Notion.Client;
 using BooksService = ExportKindleClippingsToNotion.Import.Metadata.BooksService;
 using NotionClient = ExportKindleClippingsToNotion.Notion.NotionClient;
-
+// TODO: Use relative path
 const string pathToConfig = "C:\\Users\\Ansgar\\Development\\Repositories\\ExportKindleClippingsToNotion\\ExportKindleClippingsToNotion\\params.json";
 if (args.Length == 0)
 {
