@@ -27,7 +27,11 @@ try
             AuthToken = options.NotionAuthenticationToken
         }
     );
-    var client = new NotionClient(options.NotionDatabaseId, notionClient, new PagesUpdateParametersBuilder());
+    var client = new NotionClient(
+        options.NotionDatabaseId,
+        notionClient,
+        new PageBuilder(options.NotionDatabaseId, new PagesUpdateParametersBuilder())
+    );
     var importer = new Importer(new FileClient(fileSystem));
     var exporter = new Exporter(client);
 
