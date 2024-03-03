@@ -5,8 +5,20 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-    </PropertyGroup>
 
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>exportKindleClippingsToNotion</ToolCommandName>
+        <PackageOutputPath>nupkg</PackageOutputPath>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/AnsgarLichter/ExportKindleClippingsToNotion</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <None Include="../README.md" Pack="true" PackagePath="/"/>    
+    </ItemGroup>
+    
     <ItemGroup>
         <PackageReference Include="EnumStringValues" Version="4.0.2"/>
         <PackageReference Include="FakeItEasy" Version="8.0.1" />

@@ -455,3 +455,6 @@ $RECYCLE.BIN/
 
 # Ignore Authentication Tokens
 params.json
+
+# Release
+**/nupkg/
