@@ -11,7 +11,7 @@ public record Book(string Author, string Title)
     }
 
     public string Emoji => "📖";
-    public DateTime? LastSynchronized { get; set; }
+    public DateTimeOffset? LastSynchronized { get; set; }
     public HashSet<Clipping> Clippings { get; } = [];
 
     public void AddClipping(Clipping clipping)

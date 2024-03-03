@@ -99,7 +99,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
             {
                 Date = new Date
                 {
-                    Start = book.LastSynchronized,
+                    Start = book.LastSynchronized.Value.DateTime,
                 }
             })
             .SetIcon(
@@ -271,7 +271,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
             {
                 Date = new Date
                 {
-                    Start = book.LastSynchronized,
+                    Start = book.LastSynchronized?.DateTime,
                 }
             });
 
