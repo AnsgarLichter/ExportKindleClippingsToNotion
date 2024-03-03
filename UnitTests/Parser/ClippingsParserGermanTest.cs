@@ -8,61 +8,59 @@ namespace UnitTests.Parser;
 public class ClippingsParserGermanTest
 {
     [Fact]
-    public async Task ReturnsNullForAnInvalidClipping()
+    public void ReturnsNullForAnInvalidClipping()
     {
         var parser = new ClippingsParserGerman();
         const string clipping = "line1\nline2\nline3";
 
-        Assert.Null(await parser.ParseAsync(clipping));
+        Assert.Null(parser.Parse(clipping));
     }
 
     [Theory]
     [ClassData(typeof(ValidGermanClippingTestData))]
-    public async Task ReturnsAValidClipping(string clipping, string expectedAuthor, string expectedTitle,
+    public void ReturnsAValidClipping(string clipping, string expectedAuthor, string expectedTitle,
         int expectedStartPosition, int expectedFinishPosition, int expectedPage, DateTime expectedHighlightDate,
         string expectedText)
     {
         var parser = new ClippingsParserGerman();
-        var result = await parser.ParseAsync(clipping);
+        var result = parser.Parse(clipping);
 
         Assert.NotNull(result);
         Assert.Equal(expectedAuthor, result.Author);
         Assert.Equal(expectedTitle, result.Title);
-        Assert.NotNull(result.Clipping);
-        Assert.Equal(expectedStartPosition, result.Clipping.StartPosition);
-        Assert.Equal(expectedFinishPosition, result.Clipping.FinishPosition);
-        Assert.Equal(expectedPage, result.Clipping.Page);
-        Assert.Equal(expectedHighlightDate, result.Clipping.HighlightDate);
-        Assert.Equal(expectedText, result.Clipping.Text);
+        Assert.Equal(expectedStartPosition, result.StartPosition);
+        Assert.Equal(expectedFinishPosition, result.FinishPosition);
+        Assert.Equal(expectedPage, result.Page);
+        Assert.Equal(expectedHighlightDate, result.HighlightDate);
+        Assert.Equal(expectedText, result.Text);
     }
     
     [Theory]
     [ClassData(typeof(InvalidGermanClippingTestData))]
-    public async Task ReturnsBestMatchForInvalidClipping(string clipping, string expectedAuthor, string expectedTitle,
+    public void ReturnsBestMatchForInvalidClipping(string clipping, string expectedAuthor, string expectedTitle,
         int expectedStartPosition, int expectedFinishPosition, int expectedPage, DateTime expectedHighlightDate,
         string expectedText)
     {
         var parser = new ClippingsParserGerman();
-        var result = await parser.ParseAsync(clipping);
+        var result = parser.Parse(clipping);
 
         Assert.NotNull(result);
         Assert.Equal(expectedAuthor, result.Author);
         Assert.Equal(expectedTitle, result.Title);
-        Assert.NotNull(result.Clipping);
-        Assert.Equal(expectedStartPosition, result.Clipping.StartPosition);
-        Assert.Equal(expectedFinishPosition, result.Clipping.FinishPosition);
-        Assert.Equal(expectedPage, result.Clipping.Page);
-        Assert.Equal(expectedHighlightDate, result.Clipping.HighlightDate);
-        Assert.Equal(expectedText, result.Clipping.Text);
+        Assert.Equal(expectedStartPosition, result.StartPosition);
+        Assert.Equal(expectedFinishPosition, result.FinishPosition);
+        Assert.Equal(expectedPage, result.Page);
+        Assert.Equal(expectedHighlightDate, result.HighlightDate);
+        Assert.Equal(expectedText, result.Text);
     }
     
     [Fact]
-    public async Task ReturnsNullIfLimitHasBeenReached()
+    public void ReturnsNullIfLimitHasBeenReached()
     {
         const string clipping = "How To Win Friends and Influence People (Carnegie, Dale)\n- Your Highlight on page 79 | location 1293-1295 | Added on Tuesday, 30 August 2022 19:31:58\n\n <Sie haben die maximale Anzahl an Clipboard-Einträgen für diesen Inhalt erreicht> ";
         var parser = new ClippingsParserEnglish();
 
-        Assert.Null(await parser.ParseAsync(clipping));
+        Assert.Null(parser.Parse(clipping));
     }
 }
 

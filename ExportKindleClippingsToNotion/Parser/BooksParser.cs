@@ -1,25 +1,29 @@
 ﻿using ExportKindleClippingsToNotion.Import.Metadata;
 using ExportKindleClippingsToNotion.Model;
+using ExportKindleClippingsToNotion.Model.Dto;
 
 namespace ExportKindleClippingsToNotion.Parser;
 
 public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser clippingsParser)
     : IBooksParser
 {
+    private const string FallbackThumbnailUrl =
+        "https://bookstoreromanceday.org/wp-content/uploads/2020/08/book-cover-placeholder.png";
+
     public async Task<List<Book>> ParseAsync(IEnumerable<string> clippings)
     {
-        return await ParseBooks(clippings);
+        return await ParseBooksAsync(clippings);
     }
 
-    private async Task<List<Book>> ParseBooks(IEnumerable<string> clippings)
+    private async Task<List<Book>> ParseBooksAsync(IEnumerable<string> clippings)
     {
         var books = new List<Book>();
         var parsedClippings = new List<Clipping>();
 
         foreach (var clipping in clippings)
         {
-            var dto = await clippingsParser.ParseAsync(clipping);
-            if (dto?.Clipping == null || dto?.Author == null || dto?.Title == null)
+            var dto = clippingsParser.Parse(clipping);
+            if (dto?.Text == null || dto?.Text.Trim().Length == 0 || dto?.Author == null || dto?.Title == null)
             {
                 continue;
             }
@@ -27,14 +31,23 @@ public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser 
             var book = books.Find(x => x.Author == dto.Author && x.Title == dto.Title);
             if (book is null)
             {
-                book = new Book(dto.Author, dto.Title);
-                await AddThumbnail(book);
+                book = new Book(dto.Author, dto.Title)
+                {
+                    ThumbnailUrl = await AddThumbnailAsync(new BookDto(dto.Title, dto.Author))
+                };
                 books.Add(book);
             }
 
-            dto.Clipping.Book = book;
-            book.AddClipping(dto.Clipping);
-            parsedClippings.Add(dto.Clipping);
+            var parsedClipping = new Clipping(
+                dto.Text,
+                dto.StartPosition,
+                dto.FinishPosition,
+                dto.Page,
+                dto.HighlightDate,
+                book
+            );
+            book.AddClipping(parsedClipping);
+            parsedClippings.Add(parsedClipping);
         }
 
         Console.WriteLine($"Parsed {books.Count} books");
@@ -43,16 +56,16 @@ public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser 
         return books;
     }
 
-    private async Task AddThumbnail(Book book)
+    private async Task<string> AddThumbnailAsync(BookDto book)
     {
-        book.Thumbnail = await metadataFetcher.SearchThumbnail(book);
-        if (book.Thumbnail == null || book.Thumbnail.Trim().Length == 0)
+        var thumbnail = await metadataFetcher.GetThumbnailUrlAsync(book);
+        if (thumbnail == null || thumbnail.Trim().Length == 0)
         {
-            //TODO: Use fallback image
             Console.WriteLine($"use fallback image for {book.Title}");
-            return;
+            return FallbackThumbnailUrl;
         }
 
         Console.WriteLine($"Found thumbnail for {book.Title}");
+        return thumbnail;
     }
 }

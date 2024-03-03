@@ -15,11 +15,11 @@ public class ImporterTest
         var importer = new Importer(client);
         const string pathToClippings = "path/to/clippings.txt";
         var expectedClippings = new string[] { "Clipping 1", "Clipping 2" };
-        A.CallTo(() => client.Import(pathToClippings)).Returns(expectedClippings);
+        A.CallTo(() => client.ImportAsync(pathToClippings)).Returns(expectedClippings);
         
-        var result = await importer.Import(pathToClippings);
+        var result = await importer.ImportAsync(pathToClippings);
         
         Assert.Equal(expectedClippings, result);
-        A.CallTo(() => client.Import(pathToClippings)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => client.ImportAsync(pathToClippings)).MustHaveHappenedOnceExactly();
     }
 }

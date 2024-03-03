@@ -16,8 +16,8 @@ public class ExporterTest
         var exporter = new Exporter(client);
         var books = new List<Book> { new Book("author", "title") };
         
-        await exporter.Export(books);
+        await exporter.ExportAsync(books);
         
-        A.CallTo(() => client.Export(books)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => client.ExportAsync(books)).MustHaveHappenedOnceExactly();
     }
 }

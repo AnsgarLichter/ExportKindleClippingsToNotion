@@ -5,19 +5,19 @@ namespace ExportKindleClippingsToNotion.Parser;
 
 public abstract class ClippingsParser(ClippingsLanguageConfiguration languageConfiguration) : IClippingsParser
 {
-    public Task<ClippingDto?> ParseAsync(string clipping)
+    public ClippingDto? Parse(string clipping)
     {
         var lines = clipping.Split("\n");
         if (lines.Length < 4)
         {
             Console.WriteLine("Found an invalid clipping. Parsing next one ...");
-            return Task.FromResult<ClippingDto?>(null);
+            return null;
         }
-        
+
         var lineTitleAndAuthor = lines[0];
         var title = languageConfiguration.Title.Match(lineTitleAndAuthor).Value;
         var author = languageConfiguration.Author.Match(lineTitleAndAuthor).Value;
-        
+
         var linePagePositionDate = lines[1];
         var page = languageConfiguration.Page.Match(linePagePositionDate).Value;
         var startPosition = languageConfiguration.StartPosition.Match(linePagePositionDate).Value;
@@ -28,19 +28,16 @@ public abstract class ClippingsParser(ClippingsLanguageConfiguration languageCon
         if (languageConfiguration.ClippingsLimitReached.IsMatch(text))
         {
             Console.WriteLine("Skipping clipping because limit has been reached");
-            return Task.FromResult<ClippingDto?>(null);
+            return null;
         }
 
         Console.WriteLine(
             $"{title} by {author}: Page {page} at position from {startPosition} to {finishPosition} created at {dateTime} - {text}");
 
-        var parsedClipping = new Clipping(
-            text,
-            !string.IsNullOrEmpty(startPosition) ? int.Parse(startPosition) : 0,
-            !string.IsNullOrEmpty(finishPosition) ? int.Parse(finishPosition) : 0,
-            !string.IsNullOrEmpty(page) ? int.Parse(page) : 0,
-            dateTime
-        );
-        return Task.FromResult<ClippingDto?>(new ClippingDto(parsedClipping, author, title));
+        return new ClippingDto(text: text,
+            startPosition: !string.IsNullOrEmpty(startPosition) ? int.Parse(startPosition) : 0,
+            finishPosition: !string.IsNullOrEmpty(finishPosition) ? int.Parse(finishPosition) : 0,
+            page: !string.IsNullOrEmpty(page) ? int.Parse(page) : 0, highlightDate: dateTime, author: author,
+            title: title);
     }
 }

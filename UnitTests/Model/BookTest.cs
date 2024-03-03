@@ -6,126 +6,80 @@ namespace UnitTests.Model;
 [TestSubject(typeof(Book))]
 public class BookTest
 {
+    [Fact]
+    public void Constructor_SetsAuthorAndTitle()
+    {
+        const string author = "Author";
+        const string title = "Title";
+
+        var book = new Book(author, title);
+
+        Assert.Equal(author, book.Author);
+        Assert.Equal(title, book.Title);
+    }
 
     [Fact]
-        public void Equals_ReturnsTrueForSameObject()
+    public void ThumbnailUrl_GetterReturnsNullUrlForInvalidUrl()
+    {
+        var book = new Book("Author", "Title")
         {
-            var book = new Book("Author", "Title");
-            
-            Assert.True(book.Equals(book));
-        }
+            ThumbnailUrl = "thumbnail"
+        };
 
-        [Fact]
-        public void Equals_ReturnsFalseForNull()
+        Assert.Null(book.ThumbnailUrl);
+    }
+
+    [Fact]
+    public void ThumbnailUrl_GetterReturnsValidUrlForValidUrl()
+    {
+        var book = new Book("Author", "Title")
         {
-            var book = new Book("Author", "Title");
+            ThumbnailUrl = "https://example.com/thumbnail.jpg"
+        };
 
-            Assert.False(book.Equals(null));
-        }
+        Assert.Equal("https://example.com/thumbnail.jpg", book.ThumbnailUrl);
+    }
 
-        [Fact]
-        public void Equals_ReturnsFalseForDifferentType()
-        {
-            var book = new Book("Author", "Title");
-            var otherObject = new object();
+    [Fact]
+    public void AddClipping_AddsClippingToList()
+    {
+        var book = new Book("Author", "Title");
+        var clipping = new Clipping("text", 1, 2, 3, new DateTime(2022, 1, 1), book);
 
-            Assert.False(book.Equals(otherObject));
-        }
+        book.AddClipping(clipping);
 
-        [Fact]
-        public void Equals_ReturnsTrueForEqualObjects()
-        {
-            // Arrange
-            var book1 = new Book("Author", "Title");
-            var book2 = new Book("Author", "Title");
-            
-            Assert.True(book1.Equals(book2));
-        }
+        Assert.Contains(clipping, book.Clippings);
+    }
 
-        [Fact]
-        public void Equals_ReturnsFalseForDifferentAuthor()
-        {
-            var book1 = new Book("Author1", "Title");
-            var book2 = new Book("Author2", "Title");
+    [Fact]
+    public void AddClipping_DoesNotAddDuplicateClipping()
+    {
+        var book = new Book("Author", "Title");
+        var clipping = new Clipping("text", 1, 2, 3, new DateTime(2022, 1, 1), book);
 
-            Assert.False(book1.Equals(book2));
-        }
+        book.AddClipping(clipping);
+        book.AddClipping(clipping);
 
-        [Fact]
-        public void Equals_ReturnsFalseForDifferentTitle()
-        {
-            var book1 = new Book("Author", "Title1");
-            var book2 = new Book("Author", "Title2");
+        Assert.Single(book.Clippings);
+    }
 
-            Assert.False(book1.Equals(book2));
-        }
+    [Fact]
+    public void Emoji_ReturnsBookEmoji()
+    {
+        var book = new Book("Author", "Title");
 
-        [Fact]
-        public void GetHashCode_ReturnsSameValueForEqualObjects()
-        {
-            var book1 = new Book("Author", "Title");
-            var book2 = new Book("Author", "Title");
-            
-            Assert.Equal(book1.GetHashCode(), book2.GetHashCode());
-        }
+        Assert.Equal("📖", book.Emoji);
+    }
 
-        [Fact]
-        public void GetHashCode_ReturnsDifferentValueForDifferentObjects()
-        {
-            var book1 = new Book("Author1", "Title1");
-            var book2 = new Book("Author2", "Title2");
+    [Fact]
+    public void LastSynchronized_GetterAndSetter_WorkAsExpected()
+    {
+        var book = new Book("Author", "Title");
+        var expectedDateTime = new DateTime(2023, 1, 1);
 
-            Assert.NotEqual(book1.GetHashCode(), book2.GetHashCode());
-        }
+        book.LastSynchronized = expectedDateTime;
+        var retrievedDateTime = book.LastSynchronized;
 
-        [Fact]
-        public void AddClipping_AddsClippingToList()
-        {
-            var book = new Book("Author", "Title");
-            var clipping = new Clipping("text", 1, 2, 3, new DateTime(2022, 1, 1));
-            
-            book.AddClipping(clipping);
-            
-            Assert.Contains(clipping, book.Clippings);
-        }
-
-        [Fact]
-        public void AddClipping_DoesNotAddDuplicateClipping()
-        {
-            var book = new Book("Author", "Title");
-            var clipping = new Clipping("text", 1, 2, 3, new DateTime(2022, 1, 1));
-            
-            book.AddClipping(clipping);
-            book.AddClipping(clipping);
-            
-            Assert.Single(book.Clippings);
-        }
-        
-        [Fact]
-        public void Emoji_ReturnsBookEmoji()
-        {
-            var book = new Book("Author", "Title");
-            
-            Assert.Equal("📖", book.Emoji);
-        }
-        
-        [Fact]
-        public void LastSynchronized_GetterAndSetter_WorkAsExpected()
-        {
-            var book = new Book("Author", "Title");
-            var expectedDateTime = new DateTime(2023, 1, 1);
-            
-            book.LastSynchronized = expectedDateTime;
-            var retrievedDateTime = book.LastSynchronized;
-            
-            Assert.Equal(expectedDateTime, retrievedDateTime);
-        }
-        
-        [Fact]
-        public void ToString_ReturnsExpectedFormat()
-        {
-            var book = new Book("Author", "Title");
-            
-            Assert.Equal("Title (Author)", book.ToString());
-        }
+        Assert.Equal(expectedDateTime, retrievedDateTime);
+    }
 }

@@ -8,7 +8,6 @@ namespace ExportKindleClippingsToNotion.Notion;
 public class NotionClient(string databaseId, INotionClient notionClient, IPagesUpdateParametersBuilder builder)
     : IExportClient
 {
-    private readonly IPagesUpdateParametersBuilder _builder = builder;
 
     public Task<Database> GetDatabase()
     {
@@ -26,28 +25,28 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
         );
     }
 
-    public async Task Export(List<Book> books)
+    public async Task ExportAsync(List<Book> books)
     {
         foreach (var book in books)
         {
-            var pages = await this.Query(book);
+            var pages = await Query(book);
             Console.WriteLine($"Found {pages.Results.Count}");
 
             if (pages.Results.Count == 0)
             {
-                await CreateBook(book);
+                await CreateBookAsync(book);
                 continue;
             }
             
-            await UpdateBook(book, pages.Results[0]);
+            await UpdateBookAsync(book, pages.Results[0]);
         }
 
         Console.WriteLine($"Export finished!");
     }
 
-    private async Task CreateBook(Book book)
+    private async Task CreateBookAsync(Book book)
     {
-        var page = await notionClient.Pages.CreateAsync(this.GetCreateBuilder(book));
+        var page = await notionClient.Pages.CreateAsync(GetCreateBuilder(book));
         if (page?.Id == null)
         {
             Console.WriteLine($"Couldn't create page for book {book.Title} by {book.Author}");
@@ -100,7 +99,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
             {
                 Date = new Date
                 {
-                    Start = book.LastSynchronized,
+                    Start = book.LastSynchronized.Value.DateTime,
                 }
             })
             .SetIcon(
@@ -114,11 +113,11 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
                 {
                     External = new ExternalFile.Info
                     {
-                        Url = book.Thumbnail
+                        Url = book.ThumbnailUrl
                     }
                 }
             )
-            .AddPageContent(this.CreateClippingsTable(book))
+            .AddPageContent(CreateClippingsTable(book))
             .Build();
     }
 
@@ -203,7 +202,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
         };
     }
 
-    private async Task UpdateBook(Book book, Page page)
+    private async Task UpdateBookAsync(Book book, Page page)
     {
         Console.WriteLine($"Book has already been synced. Therefore it's going to be updated.");
 
@@ -225,7 +224,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
             page.Id,
             new BlocksAppendChildrenParameters()
             {
-                Children = new[] { this.CreateClippingsTable(book) }
+                Children = new[] { CreateClippingsTable(book) }
             }
         );
     }
@@ -235,10 +234,10 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
         page.Properties.Remove("LastEdited");
         foreach (var property in page.Properties)
         {
-            _builder.WithProperty(property.Key, property.Value);
+            builder.WithProperty(property.Key, property.Value);
         }
 
-        _builder.WithProperty("Title", new TitlePropertyValue
+        builder.WithProperty("Title", new TitlePropertyValue
             {
                 Title =
                 [
@@ -272,16 +271,16 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
             {
                 Date = new Date
                 {
-                    Start = book.LastSynchronized,
+                    Start = book.LastSynchronized?.DateTime,
                 }
             });
 
-        _builder.WithCover(page.Cover);
-        _builder.WithIcon(new EmojiObject
+        builder.WithCover(page.Cover);
+        builder.WithIcon(new EmojiObject
         {
             Emoji = book.Emoji
         });
 
-        return _builder.Build();
+        return builder.Build();
     }
 }

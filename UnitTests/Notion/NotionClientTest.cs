@@ -54,7 +54,7 @@ public class NotionClientTest
         var notionClient = new NotionClient("databaseId", notionClientMock, pagesUpdateParametersBuilderMock);
         var book = new Book("Author", "Title")
         {
-            Clippings = { new Clipping("text", 1, 2, 3, DateTime.Now) }
+            Clippings = { new Clipping("text", 1, 2, 3, DateTime.Now, new Book("author", "title")) }
         };
         var books = new List<Book> { book };
 
@@ -74,7 +74,7 @@ public class NotionClientTest
                 A<CancellationToken>.Ignored));
         updateAsyncMock.Returns(Task.FromResult(new Page()));
 
-        await notionClient.Export(books);
+        await notionClient.ExportAsync(books);
 
         queryAsyncMock.MustHaveHappenedOnceExactly();
         createAsyncMock.MustHaveHappenedOnceExactly();
@@ -154,7 +154,7 @@ public class NotionClientTest
                 A<CancellationToken>.Ignored
             )).Returns(Task.FromResult(new PaginatedList<IBlock>()));
 
-        await notionClient.Export(books);
+        await notionClient.ExportAsync(books);
 
         updateAsyncMock.MustHaveHappenedOnceExactly();
     }
@@ -216,7 +216,7 @@ public class NotionClientTest
                 A<CancellationToken>.Ignored
             )).Returns(Task.FromResult(new PaginatedList<IBlock>()));
 
-        await Assert.ThrowsAsync<Exception>(() => notionClient.Export(books));
+        await Assert.ThrowsAsync<Exception>(() => notionClient.ExportAsync(books));
 
         updateAsyncMock.MustHaveHappenedOnceExactly();
     }

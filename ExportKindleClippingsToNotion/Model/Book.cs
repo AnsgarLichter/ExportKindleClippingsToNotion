@@ -1,44 +1,21 @@
 namespace ExportKindleClippingsToNotion.Model;
 
-public class Book(string author, string title)
+public record Book(string Author, string Title)
 {
-    public string? Author { get; } = author;
-    public string? Title { get; } = title;
-
-    public string? Thumbnail { get; set; }
+    
+    private readonly string? _thumbnailUrl;
+    public string? ThumbnailUrl
+    {
+        get => _thumbnailUrl;
+        init => _thumbnailUrl = Uri.IsWellFormedUriString(value, UriKind.Absolute) ? value : null;
+    }
 
     public string Emoji => "📖";
-    public DateTime? LastSynchronized { get; set; }
-    public List<Clipping> Clippings { get; } = [];
+    public DateTimeOffset? LastSynchronized { get; set; }
+    public HashSet<Clipping> Clippings { get; } = [];
 
     public void AddClipping(Clipping clipping)
     {
-        if (Clippings.Contains(clipping))
-        {
-            return;
-        }
-
         Clippings.Add(clipping);
-    }
-
-    public override bool Equals(object? obj)
-    {
-        if (obj == null || GetType() != obj.GetType())
-        {
-            return false;
-        }
-
-        var book = (Book)obj;
-        return book.Author == this.Author && book.Title == this.Title;
-    }
-
-    public override int GetHashCode()
-    {
-        return (Author, Title).GetHashCode();
-    }
-
-    public override string ToString()
-    {
-        return $"{this.Title} ({this.Author})";
     }
 }

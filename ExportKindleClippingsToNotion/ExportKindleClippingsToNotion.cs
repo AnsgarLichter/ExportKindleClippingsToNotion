@@ -9,8 +9,8 @@ public class ExportKindleClippingsToNotion(IImporter importer, IBooksParser book
 {
     public async Task ExecuteAsync(string pathToClippings)
     {
-        var clippings = await importer.Import(pathToClippings);
+        var clippings = await importer.ImportAsync(pathToClippings);
         var books = await booksParser.ParseAsync(clippings);
-        await exporter.Export(books);
+        await exporter.ExportAsync(books);
     }
 }

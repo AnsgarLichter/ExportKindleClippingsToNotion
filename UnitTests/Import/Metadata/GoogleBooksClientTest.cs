@@ -1,5 +1,6 @@
 ﻿using ExportKindleClippingsToNotion.Import.Metadata;
 using ExportKindleClippingsToNotion.Model;
+using ExportKindleClippingsToNotion.Model.Dto;
 using FakeItEasy;
 using Google.Apis.Books.v1;
 using Google.Apis.Books.v1.Data;
@@ -22,7 +23,7 @@ public class GoogleBooksClientTest
     [Fact]
     public async Task SearchThumbnail_ReturnsThumbnail()
     {
-        var book = new Book("author", "title");
+        var book = new BookDto(author: "author", title: "title");
         const string thumbnailUrl = "https://example.com/thumbnail.jpg";
         var volumes = new Volumes()
         {
@@ -43,7 +44,7 @@ public class GoogleBooksClientTest
         A.CallTo(() => _booksServiceMock.ExecuteVolumesListRequestAsync("intitle:title+inauthor:author"))
             .Returns(volumes);
         
-        var result = await _testSubject.SearchThumbnail(book);
+        var result = await _testSubject.GetThumbnailUrlAsync(book);
         
         Assert.Equal(thumbnailUrl, result);
     }
@@ -51,8 +52,7 @@ public class GoogleBooksClientTest
     [Fact]
     public async Task SearchThumbnail_ReturnsNullWhenZeroItemsFound()
     {
-        var book = new Book("author", "title");
-        const string thumbnailUrl = "https://example.com/thumbnail.jpg";
+        var book = new BookDto(author: "author", title: "title");
         var volumes = new Volumes()
         {
             Items = []
@@ -61,7 +61,7 @@ public class GoogleBooksClientTest
         A.CallTo(() => _booksServiceMock.ExecuteVolumesListRequestAsync("intitle:title+inauthor:author"))
             .Returns(volumes);
         
-        var result = await _testSubject.SearchThumbnail(book);
+        var result = await _testSubject.GetThumbnailUrlAsync(book);
         
         Assert.Null(result);
     }

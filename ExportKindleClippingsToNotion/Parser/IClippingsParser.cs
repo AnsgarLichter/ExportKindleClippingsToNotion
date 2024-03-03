@@ -4,5 +4,5 @@ namespace ExportKindleClippingsToNotion.Parser;
 
 public interface IClippingsParser
 {
-    public Task<ClippingDto?> ParseAsync(string clipping);
+    public ClippingDto? Parse(string clipping);
 }

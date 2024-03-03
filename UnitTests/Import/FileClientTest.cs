@@ -21,7 +21,7 @@ public class FileClientTest
         )).Returns(Task.FromResult(clippingsText));
         var fileClient = new FileClient(fileSystem);
 
-        var result = await fileClient.Import(pathToClippings);
+        var result = await fileClient.ImportAsync(pathToClippings);
 
         Assert.Equal(["Title 1\nMetadata 1\n\nText1\n", "Title2\nMetadata2\n\nText2\n", "Title3\nMetadata3\n\nText3"],
             result);
@@ -39,7 +39,7 @@ public class FileClientTest
         )).Returns(Task.FromResult(clippingsText));
         var fileClient = new FileClient(fileSystem);
 
-        var result = await fileClient.Import(pathToClippings);
+        var result = await fileClient.ImportAsync(pathToClippings);
 
         Assert.Equal([""], result);
     }
@@ -54,7 +54,7 @@ public class FileClientTest
         )).Throws<ArgumentNullException>();
         var fileClient = new FileClient(fileSystem);
 
-        await Assert.ThrowsAsync<ArgumentNullException>(() => fileClient.Import(null));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => fileClient.ImportAsync(null));
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public class FileClientTest
         )).Throws<FileNotFoundException>();
         var fileClient = new FileClient(fileSystem);
 
-        await Assert.ThrowsAsync<FileNotFoundException>(() => fileClient.Import(pathToClippings));
+        await Assert.ThrowsAsync<FileNotFoundException>(() => fileClient.ImportAsync(pathToClippings));
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public class FileClientTest
         )).Returns(Task.FromResult(clippingsText));
         var fileClient = new FileClient(fileSystem);
 
-        var result = await fileClient.Import(pathToClippings);
+        var result = await fileClient.ImportAsync(pathToClippings);
 
         Assert.Equal(["Clipping 1", "Clipping 2", "=========="], result);
     }
