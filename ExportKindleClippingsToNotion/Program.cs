@@ -1,5 +1,4 @@
 ﻿using System.IO.Abstractions;
-using ExportKindleClippingsToNotion.Config;
 using ExportKindleClippingsToNotion.Export;
 using ExportKindleClippingsToNotion.Import;
 using ExportKindleClippingsToNotion.Import.Metadata;
@@ -8,47 +7,38 @@ using ExportKindleClippingsToNotion.Parser;
 using Notion.Client;
 using BooksService = ExportKindleClippingsToNotion.Import.Metadata.BooksService;
 using NotionClient = ExportKindleClippingsToNotion.Notion.NotionClient;
-// TODO: Use relative path
-const string pathToConfig = "C:\\Users\\Ansgar\\Development\\Repositories\\ExportKindleClippingsToNotion\\ExportKindleClippingsToNotion\\params.json";
-if (args.Length == 0)
-{
-    Console.WriteLine("Please provide a path to your clippings file");
-    return;
-}
 
 try
 {
+    var arguments = Arguments.Parse(args);
+    if (!arguments.IsParseSuccessful)
+    {
+        Console.WriteLine(
+            "Please provide a path to your clippings file, your Notion Authentication Token and your Notion Database ID. Use --help for more information.");
+        return;
+    }
+
+    var options = arguments.ParsedOptions!;
     var fileSystem = new FileSystem();
-    var configReader = new ConfigReader(fileSystem);
-    var config = await configReader.ExecuteAsync(pathToConfig);
-    
+
     var notionClient = NotionClientFactory.Create(
         new ClientOptions
         {
-            AuthToken = config.NotionAuthenticationToken
+            AuthToken = options.NotionAuthenticationToken
         }
     );
-    var client = new NotionClient(config.NotionDatabaseId, notionClient, new PagesUpdateParametersBuilder());
+    var client = new NotionClient(options.NotionDatabaseId, notionClient, new PagesUpdateParametersBuilder());
     var importer = new Importer(new FileClient(fileSystem));
     var exporter = new Exporter(client);
-    
+
     var metadataFetcher = new GoogleBooksClient(new BooksService());
     var clippingsParser = new ClippingsParserGerman();
     var booksParser = new BooksParser(metadataFetcher, clippingsParser);
-    
-    var exportKindleClippingsToNotion = new ExportKindleClippingsToNotion.ExportKindleClippingsToNotion(importer, booksParser, exporter);
-    var pathToClippings = args[0];
-    await exportKindleClippingsToNotion.ExecuteAsync(pathToClippings);
-}
-catch (NotionApiException notionApiException)
-{
-    Console.WriteLine($"An error occurred communicating with notion: {notionApiException}");
-}
-catch (IOException ioException)
-{
-    Console.WriteLine($"An error occurred reading the clippings file: {ioException}");
-}
 
+    var exportKindleClippingsToNotion =
+        new ExportKindleClippingsToNotion.ExportKindleClippingsToNotion(importer, booksParser, exporter);
+    await exportKindleClippingsToNotion.ExecuteAsync(options.PathToClippings);
+}
 catch (Exception exception)
 {
     Console.WriteLine($"An error occurred: {exception}");

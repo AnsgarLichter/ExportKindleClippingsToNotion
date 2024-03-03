@@ -1,5 +1,4 @@
-﻿using ExportKindleClippingsToNotion.Config;
-using ExportKindleClippingsToNotion.Export;
+﻿using ExportKindleClippingsToNotion.Export;
 using ExportKindleClippingsToNotion.Import;
 using ExportKindleClippingsToNotion.Parser;
 
