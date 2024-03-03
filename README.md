@@ -8,6 +8,7 @@
     <a target="_blank" href="https://github.com/AnsgarLichter/ExportKindleClippingsToNotion/stargazers"><img src="https://img.shields.io/github/stars/AnsgarLichter/ExportKindleClippingsToNotion" /></a>
     <a target="_blank" href="https://github.com/AnsgarLichter/ExportKindleClippingsToNotion/releases"><img src="https://img.shields.io/github/v/release/AnsgarLichter/ExportKindleClippingsToNotion?display_name=tag" /></a>
     <a target="_blank" href="https://github.com/AnsgarLichter/ExportKindleClippingsToNotion/main"><img src="https://img.shields.io/github/last-commit/AnsgarLichter/ExportKindleClippingsToNotion" /></a>
+    <a target="_blank" href="https://www.nuget.org/packages/ExportKindleClippingsToNotion"><img src="https://img.shields.io/nuget/v/ExportKindleClippingsToNotion" /></a>
 </div>
 
 
