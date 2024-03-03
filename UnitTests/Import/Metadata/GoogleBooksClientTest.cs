@@ -23,11 +23,7 @@ public class GoogleBooksClientTest
     [Fact]
     public async Task SearchThumbnail_ReturnsThumbnail()
     {
-        var book = new BookDto()
-        {
-            Author = "author",
-            Title = "title"
-        };
+        var book = new BookDto(author: "author", title: "title");
         const string thumbnailUrl = "https://example.com/thumbnail.jpg";
         var volumes = new Volumes()
         {
@@ -56,11 +52,7 @@ public class GoogleBooksClientTest
     [Fact]
     public async Task SearchThumbnail_ReturnsNullWhenZeroItemsFound()
     {
-        var book = new BookDto()
-        {
-            Author = "author",
-            Title = "title"
-        };
+        var book = new BookDto(author: "author", title: "title");
         var volumes = new Volumes()
         {
             Items = []

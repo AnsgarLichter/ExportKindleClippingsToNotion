@@ -18,27 +18,10 @@ public class BooksParserTest
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
         A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.ReturnsNextFromSequence(
-            new ClippingDto
-            {
-                Text = "text1",
-                StartPosition = 1,
-                FinishPosition = 2,
-                Page = 1,
-                HighlightDate = new DateTime(2024, 02, 19, 21, 20, 00),
-                Author = "author",
-                Title = "title"
-            },
-            new ClippingDto
-            {
-                Text = "text2",
-                StartPosition = 1,
-                FinishPosition = 2,
-                Page = 1,
-                HighlightDate = new DateTime(2024, 02, 19, 21, 20, 00),
-                Author = "author",
-                Title = "title"
-            }
-        );
+            new ClippingDto(text: "text1", startPosition: 1, finishPosition: 2, page: 1,
+                highlightDate: new DateTime(2024, 02, 19, 21, 20, 00), author: "author", title: "title"),
+            new ClippingDto(text: "text2", startPosition: 1, finishPosition: 2, page: 1,
+                highlightDate: new DateTime(2024, 02, 19, 21, 20, 00), author: "author", title: "title"));
         A.CallTo(() => metadataFetcherMock.GetThumbnailUrlAsync(A<BookDto>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
@@ -81,27 +64,10 @@ public class BooksParserTest
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
         A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.ReturnsNextFromSequence(
-            new ClippingDto
-            {
-                Text = "text1",
-                StartPosition = 1,
-                FinishPosition = 2,
-                Page = 1,
-                HighlightDate = new DateTime(2024, 02, 19, 21, 20, 00),
-                Author = "author",
-                Title = "title"
-            },
-            new ClippingDto
-            {
-                Text = "text2",
-                StartPosition = 1,
-                FinishPosition = 2,
-                Page = 1,
-                HighlightDate = new DateTime(2024, 02, 19, 21, 20, 00),
-                Author = "author",
-                Title = "title"
-            }
-        );
+            new ClippingDto(text: "text1", startPosition: 1, finishPosition: 2, page: 1,
+                highlightDate: new DateTime(2024, 02, 19, 21, 20, 00), author: "author", title: "title"),
+            new ClippingDto(text: "text2", startPosition: 1, finishPosition: 2, page: 1,
+                highlightDate: new DateTime(2024, 02, 19, 21, 20, 00), author: "author", title: "title"));
         A.CallTo(() => metadataFetcherMock.GetThumbnailUrlAsync(A<BookDto>.Ignored)).Returns((string?)"https://example.com/thumbnail.jpg");
 
         var result = await booksParser.ParseAsync(new[]
@@ -141,27 +107,10 @@ public class BooksParserTest
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
         A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.ReturnsNextFromSequence(
-            new ClippingDto
-            {
-                Text = "text1",
-                StartPosition = 1,
-                FinishPosition = 2,
-                Page = 1,
-                HighlightDate = new DateTime(2024, 02, 19, 21, 20, 00),
-                Author = "author1",
-                Title = "title1"
-            },
-            new ClippingDto
-            {
-                Text = "text2",
-                StartPosition = 1,
-                FinishPosition = 2,
-                Page = 1,
-                HighlightDate = new DateTime(2024, 02, 19, 21, 20, 00),
-                Author = "author2",
-                Title = "title2"
-            }
-        );
+            new ClippingDto(text: "text1", startPosition: 1, finishPosition: 2, page: 1,
+                highlightDate: new DateTime(2024, 02, 19, 21, 20, 00), author: "author1", title: "title1"),
+            new ClippingDto(text: "text2", startPosition: 1, finishPosition: 2, page: 1,
+                highlightDate: new DateTime(2024, 02, 19, 21, 20, 00), author: "author2", title: "title2"));
         A.CallTo(() => metadataFetcherMock.GetThumbnailUrlAsync(A<BookDto>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
@@ -233,17 +182,8 @@ public class BooksParserTest
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
         A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.Returns(
-            new ClippingDto
-            {
-                Text = "",
-                StartPosition = 1,
-                FinishPosition = 1,
-                Page = 1,
-                HighlightDate = new DateTime(2024, 02, 27),
-                Author = "author",
-                Title = "title"
-            }
-        );
+            new ClippingDto(text: "", startPosition: 1, finishPosition: 1, page: 1,
+                highlightDate: new DateTime(2024, 02, 27), author: "author", title: "title"));
         A.CallTo(() => metadataFetcherMock.GetThumbnailUrlAsync(A<BookDto>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
@@ -263,17 +203,8 @@ public class BooksParserTest
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
         A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.Returns(
-            new ClippingDto
-            {
-                Text = "",
-                StartPosition = 1,
-                FinishPosition = 1,
-                Page = 1,
-                HighlightDate = new DateTime(2024, 02, 27),
-                Author = null,
-                Title = "title"
-            }
-        );
+            new ClippingDto(text: "", startPosition: 1, finishPosition: 1, page: 1,
+                highlightDate: new DateTime(2024, 02, 27), author: null, title: "title"));
         A.CallTo(() => metadataFetcherMock.GetThumbnailUrlAsync(A<BookDto>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
@@ -293,17 +224,8 @@ public class BooksParserTest
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
         A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.Returns(
-            new ClippingDto
-            {
-                Text = "",
-                StartPosition = 1,
-                FinishPosition = 1,
-                Page = 1,
-                HighlightDate = new DateTime(2024, 02, 27),
-                Author = "author",
-                Title = null
-            }
-        );
+            new ClippingDto(text: "", startPosition: 1, finishPosition: 1, page: 1,
+                highlightDate: new DateTime(2024, 02, 27), author: "author", title: null));
         A.CallTo(() => metadataFetcherMock.GetThumbnailUrlAsync(A<BookDto>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]

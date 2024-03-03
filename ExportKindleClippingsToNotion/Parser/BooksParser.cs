@@ -33,11 +33,7 @@ public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser 
             {
                 book = new Book(dto.Author, dto.Title)
                 {
-                    ThumbnailUrl = await AddThumbnailAsync(new BookDto()
-                    {
-                        Author = dto.Author,
-                        Title = dto.Title
-                    })
+                    ThumbnailUrl = await AddThumbnailAsync(new BookDto(dto.Title, dto.Author))
                 };
                 books.Add(book);
             }

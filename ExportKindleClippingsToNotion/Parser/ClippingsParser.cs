@@ -34,15 +34,10 @@ public abstract class ClippingsParser(ClippingsLanguageConfiguration languageCon
         Console.WriteLine(
             $"{title} by {author}: Page {page} at position from {startPosition} to {finishPosition} created at {dateTime} - {text}");
 
-        return new ClippingDto()
-        {
-            Text = text,
-            StartPosition = !string.IsNullOrEmpty(startPosition) ? int.Parse(startPosition) : 0,
-            FinishPosition = !string.IsNullOrEmpty(finishPosition) ? int.Parse(finishPosition) : 0,
-            Page = !string.IsNullOrEmpty(page) ? int.Parse(page) : 0,
-            HighlightDate = dateTime,
-            Author = author,
-            Title = title
-        };
+        return new ClippingDto(text: text,
+            startPosition: !string.IsNullOrEmpty(startPosition) ? int.Parse(startPosition) : 0,
+            finishPosition: !string.IsNullOrEmpty(finishPosition) ? int.Parse(finishPosition) : 0,
+            page: !string.IsNullOrEmpty(page) ? int.Parse(page) : 0, highlightDate: dateTime, author: author,
+            title: title);
     }
 }
