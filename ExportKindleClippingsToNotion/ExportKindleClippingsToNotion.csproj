@@ -24,4 +24,10 @@
     <ItemGroup>
       <Folder Include="Assets\" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Reference Include="JetBrains.ReSharper.TestRunner.Merged">
+        <HintPath>..\..\..\..\..\..\Program Files\JetBrains\JetBrains Rider 2023.3.3\lib\ReSharperHost\TestRunner\netcoreapp3.0\JetBrains.ReSharper.TestRunner.Merged.dll</HintPath>
+      </Reference>
+    </ItemGroup>
 </Project>
