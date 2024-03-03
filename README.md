@@ -26,11 +26,15 @@ If you want to request the support for your language, open an issue and add an e
 ## 🔧 Prerequisites
 - Kindle
 - Notion account
+- [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) or higher
 
 ## :hammer: Setup and Installation
 1. Install the tool:
    - Download the latest release from the [releases page](https://github.com/AnsgarLichter/ExportKindleClippingsToNotion/releases)
-   - Package Managers coming soon!
+   - Using Nuget (see [ExportKindleClippingsToNotion@Nuget](https://www.nuget.org/packages/ExportKindleClippingsToNotion/1.0.0):
+     ```bash
+       dotnet tool install --global ExportKindleClippingsToNotion --version 1.0.0
+     ```
 2. Duplicate the [database template](https://skillful-lemming-b3c.notion.site/8953e78fa1264d5c9913e31883240fa0?v=914febedb5c04978ad07372bb57d1248&pvs=74) into your own workspace.
 3. Create a `New integration` at [Notion - My Integrations](https://www.notion.so/my-integrations). As soon as your created your integration, press `Secrets`, `Show` and `Copy` your token. Save it somewhere to use it later.
 4. Share your database with your integration:
@@ -69,7 +73,7 @@ If you want to request the support for your language, open an issue and add an e
 
    A call may look like this:
    ```
-   exportKindleClippingsToNotion -p ~/Users/Test/Documents/Clippings.txt -a secret_kashjdsajhkdsdjshjsdahdkjdshajkhs -d 1253e78fs1214d5c9913e31883240fa0
+   ExportKindleClippingsToNotion -p ~/Users/Test/Documents/Clippings.txt -a secret_kashjdsajhkdsdjshjsdahdkjdshajkhs -d 1253e78fs1214d5c9913e31883240fa0
    ```
 
 ## :sparkler: Outlook
