@@ -57,7 +57,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
 
     private PagesCreateParameters GetCreateBuilder(Book book)
     {
-        book.LastSynchronized = DateTime.Now;
+        book.LastSynchronized = new DateTimeOffset(DateTime.Now);
 
         return PagesCreateParametersBuilder.Create(
                 new DatabaseParentInput
@@ -67,8 +67,8 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
             )
             .AddProperty("Title", new TitlePropertyValue
             {
-                Title = new List<RichTextBase>()
-                {
+                Title =
+                [
                     new RichTextText()
                     {
                         Text = new Text
@@ -76,12 +76,12 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
                             Content = book.Title
                         }
                     }
-                }
+                ]
             })
             .AddProperty("Author", new RichTextPropertyValue
             {
-                RichText = new List<RichTextBase>()
-                {
+                RichText =
+                [
                     new RichTextText()
                     {
                         Text = new Text
@@ -89,7 +89,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
                             Content = book.Author
                         }
                     }
-                }
+                ]
             })
             .AddProperty("Highlights", new NumberPropertyValue
             {
@@ -99,7 +99,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
             {
                 Date = new Date
                 {
-                    Start = book.LastSynchronized.Value.DateTime,
+                    Start = book.LastSynchronized?.LocalDateTime,
                 }
             })
             .SetIcon(
@@ -131,36 +131,33 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
                 {
                     Cells = new[]
                     {
-                        new List<RichTextText>()
-                        {
-                            new()
+                        [
+                            new RichTextText
                             {
                                 Text = new Text()
                                 {
                                     Content = "Clipping"
                                 }
                             }
-                        },
-                        new List<RichTextText>()
-                        {
-                            new()
+                        ],
+                        [
+                            new RichTextText
                             {
                                 Text = new Text()
                                 {
                                     Content = "Page"
                                 }
                             }
-                        },
-                        new List<RichTextText>()
-                        {
-                            new()
+                        ],
+                        [
+                            new RichTextText
                             {
                                 Text = new Text()
                                 {
                                     Content = "Start Position"
                                 }
                             }
-                        },
+                        ],
                         new List<RichTextText>()
                         {
                             new()
@@ -206,7 +203,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
     {
         Console.WriteLine($"Book has already been synced. Therefore it's going to be updated.");
 
-        book.LastSynchronized = DateTime.Now;
+        book.LastSynchronized = new DateTimeOffset(DateTime.Now);
 
         var result = await notionClient.Pages.UpdateAsync(page.Id, GetUpdateParameters(book, page));
         if (result?.Id == null)
@@ -231,7 +228,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
 
     private PagesUpdateParameters GetUpdateParameters(Book book, Page page)
     {
-        page.Properties.Remove("LastEdited");
+        page.Properties.Remove("Last Edited");
         foreach (var property in page.Properties)
         {
             builder.WithProperty(property.Key, property.Value);
@@ -271,7 +268,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
             {
                 Date = new Date
                 {
-                    Start = book.LastSynchronized?.DateTime,
+                    Start = book.LastSynchronized?.LocalDateTime,
                 }
             });
 
