@@ -11,28 +11,28 @@ namespace UnitTests.Notion;
 public class NotionClientTest
 {
     [Fact]
-    public async Task GetDatabase_ReturnsDatabase()
+    public async Task GetDatabaseAsync_ReturnsDatabase()
     {
         var notionClientMock = A.Fake<INotionClient>();
-        var pagesUpdateParametersBuilderMock = A.Fake<IPagesUpdateParametersBuilder>();
-        var notionClient = new NotionClient("databaseId", notionClientMock, pagesUpdateParametersBuilderMock);
+        IPageBuilder pageBuilder = A.Fake<IPageBuilder>();
+        var notionClient = new NotionClient("databaseId", notionClientMock, pageBuilder);
 
         var retrieveAsyncMock = A.CallTo(() =>
             notionClientMock.Databases.RetrieveAsync("databaseId", A<CancellationToken>.Ignored));
         retrieveAsyncMock.Returns(Task.FromResult(new Database()));
 
-        var result = await notionClient.GetDatabase();
+        var result = await notionClient.GetDatabaseAsync();
 
         Assert.NotNull(result);
         retrieveAsyncMock.MustHaveHappenedOnceExactly();
     }
 
     [Fact]
-    public async Task Query_ReturnsPaginatedListOfPages()
+    public async Task QueryAsync_ReturnsPaginatedListOfPages()
     {
         var notionClientMock = A.Fake<INotionClient>();
-        var pagesUpdateParametersBuilderMock = A.Fake<IPagesUpdateParametersBuilder>();
-        var notionClient = new NotionClient("databaseId", notionClientMock, pagesUpdateParametersBuilderMock);
+        IPageBuilder pageBuilder = A.Fake<IPageBuilder>();
+        var notionClient = new NotionClient("databaseId", notionClientMock, pageBuilder);
         var book = new Book("Author", "Title");
 
         var queryAsyncMock = A.CallTo(() =>
@@ -40,184 +40,89 @@ public class NotionClientTest
                 A<CancellationToken>.Ignored));
         queryAsyncMock.Returns(Task.FromResult(new PaginatedList<Page>()));
 
-        var result = await notionClient.Query(book);
+        var result = await notionClient.QueryAsync(book);
 
         queryAsyncMock.MustHaveHappenedOnceExactly();
         Assert.NotNull(result);
     }
 
     [Fact]
-    public async Task Export_CreatesPageForBooks()
+    public async Task CreateAsync_SuccessfullyCreatesPage()
     {
+        var databaseId = "testDatabaseId";
+        var book = new Book("TestTitle", "TestAuthor");
+        var pageId = "testPageId";
+
         var notionClientMock = A.Fake<INotionClient>();
-        var pagesUpdateParametersBuilderMock = A.Fake<IPagesUpdateParametersBuilder>();
-        var notionClient = new NotionClient("databaseId", notionClientMock, pagesUpdateParametersBuilderMock);
-        var book = new Book("Author", "Title")
-        {
-            Clippings = { new Clipping("text", 1, 2, 3, DateTime.Now, new Book("author", "title")) }
-        };
-        var books = new List<Book> { book };
+        var pageBuilderMock = A.Fake<IPageBuilder>();
 
-        var paginatedList = new PaginatedList<Page>()
-        {
-            Results = []
-        };
-        var queryAsyncMock = A.CallTo(() =>
-            notionClientMock.Databases.QueryAsync("databaseId", A<DatabasesQueryParameters>.Ignored,
-                A<CancellationToken>.Ignored));
-        queryAsyncMock.Returns(Task.FromResult(paginatedList));
-        var createAsyncMock = A.CallTo(() =>
-            notionClientMock.Pages.CreateAsync(A<PagesCreateParameters>.Ignored, A<CancellationToken>.Ignored));
-        createAsyncMock.Returns(Task.FromResult(new Page()));
-        var updateAsyncMock = A.CallTo(() =>
-            notionClientMock.Pages.UpdateAsync(A<string>.Ignored, A<PagesUpdateParameters>.Ignored,
-                A<CancellationToken>.Ignored));
-        updateAsyncMock.Returns(Task.FromResult(new Page()));
+        var page = new Page { Id = pageId };
 
-        await notionClient.ExportAsync(books);
+        A.CallTo(() => pageBuilderMock.Create(A<Book>.Ignored))
+            .Returns(new PagesCreateParameters());
+        A.CallTo(() =>
+                notionClientMock.Pages.CreateAsync(A<PagesCreateParameters>.Ignored, A<CancellationToken>.Ignored))
+            .Returns(Task.FromResult(page));
 
-        queryAsyncMock.MustHaveHappenedOnceExactly();
-        createAsyncMock.MustHaveHappenedOnceExactly();
-        updateAsyncMock.MustNotHaveHappened();
+        var notionClient = new NotionClient(databaseId, notionClientMock, pageBuilderMock);
+
+        await notionClient.CreateAsync(book);
+
+        A.CallTo(() => pageBuilderMock.Create(A<Book>.Ignored)).MustHaveHappenedOnceExactly();
+        A.CallTo(() =>
+                notionClientMock.Pages.CreateAsync(A<PagesCreateParameters>.Ignored, A<CancellationToken>.Ignored))
+            .MustHaveHappenedOnceExactly();
     }
 
     [Fact]
-    public async Task Export_UpdatesPageForBooks()
+    public async Task UpdateAsync_SuccessfullyUpdatesPage()
     {
+        var databaseId = "testDatabaseId";
+        var book = new Book("TestTitle", "TestAuthor");
+        var pageId = "testPageId";
+        var page = new Page { Id = pageId };
+
         var notionClientMock = A.Fake<INotionClient>();
-        var pagesUpdateParametersBuilderMock = A.Fake<IPagesUpdateParametersBuilder>();
-        var notionClient = new NotionClient("databaseId", notionClientMock, pagesUpdateParametersBuilderMock);
-        var book = new Book("Author", "Title");
-        var books = new List<Book> { book };
+        var pageBuilderMock = A.Fake<IPageBuilder>();
 
-        var paginatedList = new PaginatedList<Page>()
-        {
-            Results =
-            [
-                new Page()
-                {
-                    Properties = new Dictionary<string, PropertyValue>()
-                    {
-                        { "A", new TitlePropertyValue() }
-                    }
-                }
-            ]
-        };
+        A.CallTo(() => pageBuilderMock.Update(A<Page>.Ignored, A<Book>.Ignored))
+            .Returns(new PagesUpdateParameters());
         A.CallTo(() =>
-            notionClientMock.Databases.QueryAsync(
-                "databaseId",
-                A<DatabasesQueryParameters>.Ignored,
-                A<CancellationToken>.Ignored)
-        ).Returns(Task.FromResult(paginatedList));
-        A.CallTo(() =>
-            notionClientMock.Pages.CreateAsync(A<PagesCreateParameters>.Ignored, A<CancellationToken>.Ignored)
-        ).Throws(new Exception("Shouldn't have happened"));
+                notionClientMock.Pages.UpdateAsync(A<string>.Ignored, A<PagesUpdateParameters>.Ignored,
+                    A<CancellationToken>.Ignored))
+            .Returns(Task.FromResult(page));
 
-        A.CallTo(() =>
-            pagesUpdateParametersBuilderMock.WithProperty(
-                "LastEdited",
-                A<PropertyValue>.Ignored)
-        ).Throws(new Exception("Shouldn't have happened"));
-        A.CallTo(() => pagesUpdateParametersBuilderMock.Build()).Returns(new PagesUpdateParameters());
-
-        var updateAsyncMock = A.CallTo(() =>
-            notionClientMock.Pages.UpdateAsync(A<string>.Ignored, A<PagesUpdateParameters>.Ignored,
-                A<CancellationToken>.Ignored));
-        updateAsyncMock.Returns(Task.FromResult(new Page
-        {
-            Id = "ID"
-        }));
-
-        A.CallTo(() =>
-            notionClientMock.Blocks.RetrieveChildrenAsync(
-                A<string>.Ignored,
+        A.CallTo(() => notionClientMock.Blocks.RetrieveChildrenAsync(A<string>.Ignored,
                 A<BlocksRetrieveChildrenParameters>.Ignored,
-                A<CancellationToken>.Ignored
-            )).Returns(Task.FromResult<PaginatedList<IBlock>>(new PaginatedList<IBlock>()
-        {
-            Results = new List<IBlock>()
-            {
-                A.Fake<IBlock>()
-            }
-        }));
-
-        A.CallTo(() =>
-            notionClientMock.Blocks.DeleteAsync(
-                A<string>.Ignored,
-                A<CancellationToken>.Ignored
-            )).Returns(Task.FromResult<HttpResponseMessage>(new HttpResponseMessage()));
-
-        A.CallTo(() =>
-            notionClientMock.Blocks.AppendChildrenAsync(
-                A<string>.Ignored,
-                A<BlocksAppendChildrenParameters>.Ignored,
-                A<CancellationToken>.Ignored
-            )).Returns(Task.FromResult(new PaginatedList<IBlock>()));
-
-        await notionClient.ExportAsync(books);
-
-        updateAsyncMock.MustHaveHappenedOnceExactly();
-    }
-
-    [Fact]
-    public async Task Export_UpdatesPageForBooksFails()
-    {
-        var notionClientMock = A.Fake<INotionClient>();
-        var pagesUpdateParametersBuilderMock = A.Fake<IPagesUpdateParametersBuilder>();
-        var notionClient = new NotionClient("databaseId", notionClientMock, pagesUpdateParametersBuilderMock);
-        var book = new Book("Author", "Title");
-        var books = new List<Book> { book };
-
-        var paginatedList = new PaginatedList<Page>()
-        {
-            Results =
-            [
-                new Page()
-                {
-                    Properties = new Dictionary<string, PropertyValue>()
-                }
-            ]
-        };
-        A.CallTo(() =>
-            notionClientMock.Databases.QueryAsync(
-                "databaseId",
-                A<DatabasesQueryParameters>.Ignored,
                 A<CancellationToken>.Ignored)
-        ).Returns(Task.FromResult(paginatedList));
+            )
+            .Returns(Task.FromResult(new PaginatedList<IBlock>()
+            {
+                Results = new List<IBlock>()
+                {
+                    new TableBlock { Id = "testBlockId" }
+                }
+            }));
+        A.CallTo(() => notionClientMock.Blocks.DeleteAsync(
+            A<string>.Ignored,
+            A<CancellationToken>.Ignored)
+        );
+
+        var notionClient = new NotionClient(databaseId, notionClientMock, pageBuilderMock);
+
+        await notionClient.UpdateAsync(book, page);
+
+        A.CallTo(() => pageBuilderMock.Update(A<Page>.Ignored, A<Book>.Ignored))
+            .MustHaveHappenedOnceExactly();
         A.CallTo(() =>
-            notionClientMock.Pages.CreateAsync(A<PagesCreateParameters>.Ignored, A<CancellationToken>.Ignored)
-        ).Throws(new Exception("Shouldn't have happened"));
+                notionClientMock.Pages.UpdateAsync(A<string>.Ignored, A<PagesUpdateParameters>.Ignored,
+                    A<CancellationToken>.Ignored))
+            .MustHaveHappenedOnceExactly();
 
-        A.CallTo(() =>
-            pagesUpdateParametersBuilderMock.WithProperty(
-                "LastEdited",
-                A<PropertyValue>.Ignored)
-        ).Throws(new Exception("Shouldn't have happened"));
-        A.CallTo(() => pagesUpdateParametersBuilderMock.Build()).Returns(new PagesUpdateParameters());
-
-        var updateAsyncMock = A.CallTo(() =>
-            notionClientMock.Pages.UpdateAsync(A<string>.Ignored, A<PagesUpdateParameters>.Ignored,
-                A<CancellationToken>.Ignored));
-        updateAsyncMock.Returns(Task.FromResult(new Page
-        {
-            Id = null
-        }));
-
-        A.CallTo(() =>
-            notionClientMock.Blocks.DeleteAsync(
-                A<string>.Ignored,
-                A<CancellationToken>.Ignored
-            )).Returns(Task.FromResult<HttpResponseMessage>(new HttpResponseMessage()));
-
-        A.CallTo(() =>
-            notionClientMock.Blocks.AppendChildrenAsync(
-                A<string>.Ignored,
-                A<BlocksAppendChildrenParameters>.Ignored,
-                A<CancellationToken>.Ignored
-            )).Returns(Task.FromResult(new PaginatedList<IBlock>()));
-
-        await Assert.ThrowsAsync<Exception>(() => notionClient.ExportAsync(books));
-
-        updateAsyncMock.MustHaveHappenedOnceExactly();
+        A.CallTo(() => notionClientMock.Blocks.RetrieveChildrenAsync(A<string>.Ignored,
+                A<BlocksRetrieveChildrenParameters>.Ignored,
+                A<CancellationToken>.Ignored)
+            )
+            .MustHaveHappenedOnceExactly();
     }
 }
