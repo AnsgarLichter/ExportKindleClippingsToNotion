@@ -1,5 +1,4 @@
 {
     "NotionAuthenticationToken": "Your notion authentication token",
-    "NotionDatabaseId": "Your database ID",
-    "Language": "Language of your Clippings (4 chars)"
+    "NotionDatabaseId": "Your database ID"
 }

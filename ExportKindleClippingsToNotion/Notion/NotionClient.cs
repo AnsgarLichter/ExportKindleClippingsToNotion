@@ -113,7 +113,7 @@ public class NotionClient(string databaseId, INotionClient notionClient, IPagesU
                 {
                     External = new ExternalFile.Info
                     {
-                        Url = book.Thumbnail
+                        Url = book.ThumbnailUrl
                     }
                 }
             )

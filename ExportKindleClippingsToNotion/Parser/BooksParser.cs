@@ -6,6 +6,9 @@ namespace ExportKindleClippingsToNotion.Parser;
 public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser clippingsParser)
     : IBooksParser
 {
+    private const string FallbackThumbnailUrl =
+        "https://bookstoreromanceday.org/wp-content/uploads/2020/08/book-cover-placeholder.png";
+
     public async Task<List<Book>> ParseAsync(IEnumerable<string> clippings)
     {
         return await ParseBooksAsync(clippings);
@@ -28,7 +31,7 @@ public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser 
             if (book is null)
             {
                 book = new Book(dto.Author, dto.Title);
-                await AddThumbnailAsync(book);
+                book.ThumbnailUrl = await AddThumbnailAsync(book);
                 books.Add(book);
             }
 
@@ -50,16 +53,16 @@ public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser 
         return books;
     }
 
-    private async Task AddThumbnailAsync(Book book)
+    private async Task<string> AddThumbnailAsync(Book book)
     {
-        book.Thumbnail = await metadataFetcher.SearchThumbnailAsync(book);
-        if (book.Thumbnail == null || book.Thumbnail.Trim().Length == 0)
+        var thumbnail = await metadataFetcher.GetThumbnailUrlAsync(book);
+        if (thumbnail == null || thumbnail.Trim().Length == 0)
         {
-            //TODO: Use fallback image
             Console.WriteLine($"use fallback image for {book.Title}");
-            return;
+            return FallbackThumbnailUrl;
         }
 
         Console.WriteLine($"Found thumbnail for {book.Title}");
+        return thumbnail;
     }
 }

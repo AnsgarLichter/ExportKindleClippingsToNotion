@@ -24,8 +24,8 @@ public class BookTest
         var book = new Book("Author", "Title");
         const string expectedThumbnail = "thumbnail";
 
-        book.Thumbnail = expectedThumbnail;
-        var retrievedThumbnail = book.Thumbnail;
+        book.ThumbnailUrl = expectedThumbnail;
+        var retrievedThumbnail = book.ThumbnailUrl;
 
         Assert.Equal(expectedThumbnail, retrievedThumbnail);
     }

@@ -37,7 +37,7 @@ public class BooksParserTest
                 "title"
             )
         );
-        A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
+        A.CallTo(() => metadataFetcherMock.GetThumbnailUrlAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
         {
@@ -51,7 +51,10 @@ public class BooksParserTest
         booksEnumerator.MoveNext();
         Assert.Equal("title", booksEnumerator.Current.Title);
         Assert.Equal("author", booksEnumerator.Current.Author);
-        Assert.Null(booksEnumerator.Current.Thumbnail);
+        Assert.Equal(
+            "https://bookstoreromanceday.org/wp-content/uploads/2020/08/book-cover-placeholder.png",
+            booksEnumerator.Current.ThumbnailUrl
+        );
         Assert.Equal(2, booksEnumerator.Current.Clippings.Count);
         var clippingsEnumerator = booksEnumerator.Current.Clippings.GetEnumerator();
         clippingsEnumerator.MoveNext();
@@ -95,7 +98,7 @@ public class BooksParserTest
                 "title"
             )
         );
-        A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)"thumbnail");
+        A.CallTo(() => metadataFetcherMock.GetThumbnailUrlAsync(A<Book>.Ignored)).Returns((string?)"thumbnail");
 
         var result = await booksParser.ParseAsync(new[]
         {
@@ -109,7 +112,7 @@ public class BooksParserTest
         booksEnumerator.MoveNext();
         Assert.Equal("title", booksEnumerator.Current.Title);
         Assert.Equal("author", booksEnumerator.Current.Author);
-        Assert.Equal("thumbnail", booksEnumerator.Current.Thumbnail);
+        Assert.Equal("thumbnail", booksEnumerator.Current.ThumbnailUrl);
         Assert.Equal(2, booksEnumerator.Current.Clippings.Count);
         var clippingsEnumerator = booksEnumerator.Current.Clippings.GetEnumerator();
         clippingsEnumerator.MoveNext();
@@ -153,7 +156,7 @@ public class BooksParserTest
                 "title2"
             )
         );
-        A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
+        A.CallTo(() => metadataFetcherMock.GetThumbnailUrlAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
         {
@@ -167,7 +170,10 @@ public class BooksParserTest
         booksEnumerator.MoveNext();
         Assert.Equal("title1", booksEnumerator.Current.Title);
         Assert.Equal("author1", booksEnumerator.Current.Author);
-        Assert.Null(booksEnumerator.Current.Thumbnail);
+        Assert.Equal(
+            "https://bookstoreromanceday.org/wp-content/uploads/2020/08/book-cover-placeholder.png",
+            booksEnumerator.Current.ThumbnailUrl
+        );
         Assert.Equal(1, booksEnumerator.Current.Clippings.Count);
         var clippingsEnumerator = booksEnumerator.Current.Clippings.GetEnumerator();
         clippingsEnumerator.MoveNext();
@@ -180,7 +186,10 @@ public class BooksParserTest
         booksEnumerator.MoveNext();
         Assert.Equal("title2", booksEnumerator.Current.Title);
         Assert.Equal("author2", booksEnumerator.Current.Author);
-        Assert.Null(booksEnumerator.Current.Thumbnail);
+        Assert.Equal(
+            "https://bookstoreromanceday.org/wp-content/uploads/2020/08/book-cover-placeholder.png",
+            booksEnumerator.Current.ThumbnailUrl
+        );
         Assert.Equal(1, booksEnumerator.Current.Clippings.Count);
         clippingsEnumerator = booksEnumerator.Current.Clippings.GetEnumerator();
         clippingsEnumerator.MoveNext();
@@ -199,7 +208,7 @@ public class BooksParserTest
         var booksParser = new BooksParser(metadataFetcherMock, clippingsParserMock);
 
         A.CallTo(() => clippingsParserMock.Parse(A<string>.Ignored))!.Returns((ClippingDto?)null);
-        A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
+        A.CallTo(() => metadataFetcherMock.GetThumbnailUrlAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
         {
@@ -227,7 +236,7 @@ public class BooksParserTest
                 "author",
                 "title"
             ));
-        A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
+        A.CallTo(() => metadataFetcherMock.GetThumbnailUrlAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
         {
@@ -255,7 +264,7 @@ public class BooksParserTest
                 null,
                 "title"
             ));
-        A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
+        A.CallTo(() => metadataFetcherMock.GetThumbnailUrlAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
         {
@@ -283,7 +292,7 @@ public class BooksParserTest
                 "author",
                 null
             ));
-        A.CallTo(() => metadataFetcherMock.SearchThumbnailAsync(A<Book>.Ignored)).Returns((string?)null);
+        A.CallTo(() => metadataFetcherMock.GetThumbnailUrlAsync(A<Book>.Ignored)).Returns((string?)null);
 
         var result = await booksParser.ParseAsync(new[]
         {

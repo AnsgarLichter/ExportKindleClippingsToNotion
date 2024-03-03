@@ -6,12 +6,12 @@ namespace ExportKindleClippingsToNotion.Import.Metadata;
 
 public interface IBookMetadataFetcher
 {
-    public Task<string?> SearchThumbnailAsync(Book book);
+    public Task<string?> GetThumbnailUrlAsync(Book book);
 }
 
 public class GoogleBooksClient(IBooksService service) : IBookMetadataFetcher
 {
-    public async Task<string?> SearchThumbnailAsync(Book book)
+    public async Task<string?> GetThumbnailUrlAsync(Book book)
     {
         var query = $"intitle:{book.Title}+inauthor:{book.Author}";
         var volumes = await service.ExecuteVolumesListRequestAsync(query);
