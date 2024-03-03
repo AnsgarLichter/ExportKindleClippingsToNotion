@@ -1,5 +1,6 @@
 ﻿using ExportKindleClippingsToNotion.Import.Metadata;
 using ExportKindleClippingsToNotion.Model;
+using ExportKindleClippingsToNotion.Model.Dto;
 using FakeItEasy;
 using Google.Apis.Books.v1;
 using Google.Apis.Books.v1.Data;
@@ -22,7 +23,11 @@ public class GoogleBooksClientTest
     [Fact]
     public async Task SearchThumbnail_ReturnsThumbnail()
     {
-        var book = new Book("author", "title");
+        var book = new BookDto()
+        {
+            Author = "author",
+            Title = "title"
+        };
         const string thumbnailUrl = "https://example.com/thumbnail.jpg";
         var volumes = new Volumes()
         {
@@ -51,8 +56,11 @@ public class GoogleBooksClientTest
     [Fact]
     public async Task SearchThumbnail_ReturnsNullWhenZeroItemsFound()
     {
-        var book = new Book("author", "title");
-        const string thumbnailUrl = "https://example.com/thumbnail.jpg";
+        var book = new BookDto()
+        {
+            Author = "author",
+            Title = "title"
+        };
         var volumes = new Volumes()
         {
             Items = []

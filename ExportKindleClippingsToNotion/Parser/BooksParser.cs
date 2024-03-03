@@ -1,5 +1,6 @@
 ﻿using ExportKindleClippingsToNotion.Import.Metadata;
 using ExportKindleClippingsToNotion.Model;
+using ExportKindleClippingsToNotion.Model.Dto;
 
 namespace ExportKindleClippingsToNotion.Parser;
 
@@ -30,8 +31,14 @@ public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser 
             var book = books.Find(x => x.Author == dto.Author && x.Title == dto.Title);
             if (book is null)
             {
-                book = new Book(dto.Author, dto.Title);
-                book.ThumbnailUrl = await AddThumbnailAsync(book);
+                book = new Book(dto.Author, dto.Title)
+                {
+                    ThumbnailUrl = await AddThumbnailAsync(new BookDto()
+                    {
+                        Author = dto.Author,
+                        Title = dto.Title
+                    })
+                };
                 books.Add(book);
             }
 
@@ -53,7 +60,7 @@ public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser 
         return books;
     }
 
-    private async Task<string> AddThumbnailAsync(Book book)
+    private async Task<string> AddThumbnailAsync(BookDto book)
     {
         var thumbnail = await metadataFetcher.GetThumbnailUrlAsync(book);
         if (thumbnail == null || thumbnail.Trim().Length == 0)

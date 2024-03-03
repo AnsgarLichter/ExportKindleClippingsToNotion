@@ -13,11 +13,11 @@ public abstract class ClippingsParser(ClippingsLanguageConfiguration languageCon
             Console.WriteLine("Found an invalid clipping. Parsing next one ...");
             return null;
         }
-        
+
         var lineTitleAndAuthor = lines[0];
         var title = languageConfiguration.Title.Match(lineTitleAndAuthor).Value;
         var author = languageConfiguration.Author.Match(lineTitleAndAuthor).Value;
-        
+
         var linePagePositionDate = lines[1];
         var page = languageConfiguration.Page.Match(linePagePositionDate).Value;
         var startPosition = languageConfiguration.StartPosition.Match(linePagePositionDate).Value;
@@ -33,15 +33,16 @@ public abstract class ClippingsParser(ClippingsLanguageConfiguration languageCon
 
         Console.WriteLine(
             $"{title} by {author}: Page {page} at position from {startPosition} to {finishPosition} created at {dateTime} - {text}");
-        
-        return new ClippingDto(
-            text,
-            !string.IsNullOrEmpty(startPosition) ? int.Parse(startPosition) : 0,
-            !string.IsNullOrEmpty(finishPosition) ? int.Parse(finishPosition) : 0,
-            !string.IsNullOrEmpty(page) ? int.Parse(page) : 0,
-            dateTime,
-            author, 
-            title
-        );
+
+        return new ClippingDto()
+        {
+            Text = text,
+            StartPosition = !string.IsNullOrEmpty(startPosition) ? int.Parse(startPosition) : 0,
+            FinishPosition = !string.IsNullOrEmpty(finishPosition) ? int.Parse(finishPosition) : 0,
+            Page = !string.IsNullOrEmpty(page) ? int.Parse(page) : 0,
+            HighlightDate = dateTime,
+            Author = author,
+            Title = title
+        };
     }
 }

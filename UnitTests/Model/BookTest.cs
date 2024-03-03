@@ -19,15 +19,25 @@ public class BookTest
     }
 
     [Fact]
-    public void Thumbnail_GetterAndSetter_WorkAsExpected()
+    public void ThumbnailUrl_GetterReturnsNullUrlForInvalidUrl()
     {
-        var book = new Book("Author", "Title");
-        const string expectedThumbnail = "thumbnail";
+        var book = new Book("Author", "Title")
+        {
+            ThumbnailUrl = "thumbnail"
+        };
 
-        book.ThumbnailUrl = expectedThumbnail;
-        var retrievedThumbnail = book.ThumbnailUrl;
+        Assert.Null(book.ThumbnailUrl);
+    }
 
-        Assert.Equal(expectedThumbnail, retrievedThumbnail);
+    [Fact]
+    public void ThumbnailUrl_GetterReturnsValidUrlForValidUrl()
+    {
+        var book = new Book("Author", "Title")
+        {
+            ThumbnailUrl = "https://example.com/thumbnail.jpg"
+        };
+
+        Assert.Equal("https://example.com/thumbnail.jpg", book.ThumbnailUrl);
     }
 
     [Fact]
