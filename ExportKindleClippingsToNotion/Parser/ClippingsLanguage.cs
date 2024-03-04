@@ -28,7 +28,8 @@ public class ClippingsLanguage()
         {
             throw new LanguageNotRecognizedException("The language of your clipping can't be recognized!");
         }
-
+        
+        Console.Write(secondLine);
         foreach (var identifier in _languageIdentifiers
                      .Where(identifier => secondLine.Contains(identifier.Value)))
             return identifier.Key;
