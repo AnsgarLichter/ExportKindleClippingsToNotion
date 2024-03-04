@@ -18,7 +18,7 @@ public class ClippingsLanguage()
     public SupportedLanguages Determine(string clipping)
     {
         var secondLine = clipping
-            .Split("\r\n")
+            .Split("\n")
             .Where(line => line.Length > 0)
             .Select(line => line.Trim())
             .Select(line => line.Replace("\u200B", Empty))
@@ -29,7 +29,6 @@ public class ClippingsLanguage()
             throw new LanguageNotRecognizedException("The language of your clipping can't be recognized!");
         }
         
-        Console.Write(secondLine);
         foreach (var identifier in _languageIdentifiers
                      .Where(identifier => secondLine.Contains(identifier.Value)))
             return identifier.Key;
