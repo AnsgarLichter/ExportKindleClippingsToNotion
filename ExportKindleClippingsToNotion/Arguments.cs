@@ -11,5 +11,6 @@ public class Arguments
 
     public bool IsParseSuccessful => _parserResult.Tag == ParserResultType.Parsed;
 
-    public static Arguments Parse(IEnumerable<string> arguments) => new(Parser.Default.ParseArguments<Options>(arguments));
+    public static Arguments Parse(IEnumerable<string> arguments) =>
+        new(Parser.Default.ParseArguments<Options>(arguments));
 }

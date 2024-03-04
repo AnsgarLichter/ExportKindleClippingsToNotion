@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="CommandLineParser" Version="2.9.1" />
         <PackageReference Include="EnumStringValues" Version="4.0.2"/>
         <PackageReference Include="FakeItEasy" Version="8.0.1"/>
         <PackageReference Include="Google.Apis.Books.v1" Version="1.64.0.2955"/>
@@ -36,11 +37,5 @@
 
     <ItemGroup>
         <Folder Include="Assets\"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <Reference Include="JetBrains.ReSharper.TestRunner.Merged">
-            <HintPath>..\..\..\..\..\..\Program Files\JetBrains\JetBrains Rider 2023.3.3\lib\ReSharperHost\TestRunner\netcoreapp3.0\JetBrains.ReSharper.TestRunner.Merged.dll</HintPath>
-        </Reference>
     </ItemGroup>
 </Project>
