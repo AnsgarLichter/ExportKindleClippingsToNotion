@@ -1,10 +1,16 @@
-﻿using ExportKindleClippingsToNotion.Model;
-using ExportKindleClippingsToNotion.Model.Dto;
+﻿using ExportKindleClippingsToNotion.Model.Dto;
 
 namespace ExportKindleClippingsToNotion.Parser;
 
-public abstract class ClippingsParser(ClippingsLanguageConfiguration languageConfiguration) : IClippingsParser
+public abstract class ClippingsParser : IClippingsParser
 {
+    protected readonly ClippingsLanguageConfiguration LanguageConfiguration;
+
+    protected ClippingsParser(ClippingsLanguageConfiguration languageConfiguration)
+    {
+        LanguageConfiguration = languageConfiguration;
+    }
+
     public ClippingDto? Parse(string clipping)
     {
         var lines = clipping.Split("\n");
@@ -15,17 +21,17 @@ public abstract class ClippingsParser(ClippingsLanguageConfiguration languageCon
         }
 
         var lineTitleAndAuthor = lines[0];
-        var title = languageConfiguration.Title.Match(lineTitleAndAuthor).Value;
-        var author = languageConfiguration.Author.Match(lineTitleAndAuthor).Value;
+        var title = LanguageConfiguration.Title.Match(lineTitleAndAuthor).Value;
+        var author = LanguageConfiguration.Author.Match(lineTitleAndAuthor).Value;
 
         var linePagePositionDate = lines[1];
-        var page = languageConfiguration.Page.Match(linePagePositionDate).Value;
-        var startPosition = languageConfiguration.StartPosition.Match(linePagePositionDate).Value;
-        var finishPosition = languageConfiguration.FinishPosition.Match(linePagePositionDate).Value;
-        var date = languageConfiguration.Date.Match(linePagePositionDate).Value;
-        var dateTime = date.Trim().Equals("") ? DateTime.Now : DateTime.Parse(date, languageConfiguration.CultureInfo);
+        var page = LanguageConfiguration.Page.Match(linePagePositionDate).Value;
+        var startPosition = LanguageConfiguration.StartPosition.Match(linePagePositionDate).Value;
+        var finishPosition = LanguageConfiguration.FinishPosition.Match(linePagePositionDate).Value;
+        var date = LanguageConfiguration.Date.Match(linePagePositionDate).Value;
+        var dateTime = date.Trim().Equals("") ? DateTime.Now : DateTime.Parse(date, LanguageConfiguration.CultureInfo);
         var text = lines[3];
-        if (languageConfiguration.ClippingsLimitReached.IsMatch(text))
+        if (LanguageConfiguration.ClippingsLimitReached.IsMatch(text))
         {
             Console.WriteLine("Skipping clipping because limit has been reached");
             return null;
