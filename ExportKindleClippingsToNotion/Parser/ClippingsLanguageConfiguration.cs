@@ -13,5 +13,5 @@ public record ClippingsLanguageConfiguration
     public required Regex FinishPosition { get; init; }
     public required Regex ClippingsLimitReached { get; init; }
 
-    public required CultureInfo CultureInfo { get; init; }
+    public required CultureInfo CultureInfo { get; set; }
 }

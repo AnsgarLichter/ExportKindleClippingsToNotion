@@ -22,6 +22,14 @@ public class ClippingsLanguageTest
                                           ==========
                                           """;
 
+    public const string RussianClipping = """
+                                          Долгая прогулка (Стивен Кинг)
+                                          – Ваша заметка в месте 5685 | Добавлено: среда, 28 февраля 2024 г. в 10:07:53
+                                          
+                                          Говорит Бейкер, один из идущих
+                                          ==========
+                                          """;
+
     public const string SpanishClipping = """
                                           How To Win Friends and Influence People (Carnegie, Dale)
                                           - La subrayado en la página 79 | posición 1293-1295 | Añadido el martes, 30 de agosto de 2022 19:40:15
@@ -55,6 +63,15 @@ public class ClippingsLanguageTest
         var determinedLanguage = clippingsLanguage.Determine(GermanClipping);
 
         Assert.Equal(SupportedLanguages.German, determinedLanguage);
+    }
+    
+    [Fact]
+    public void ReturnsRussian()
+    {
+        var clippingsLanguage = new ClippingsLanguage();
+        var determinedLanguage = clippingsLanguage.Determine(RussianClipping);
+
+        Assert.Equal(SupportedLanguages.Russian, determinedLanguage);
     }
 
     [Theory]

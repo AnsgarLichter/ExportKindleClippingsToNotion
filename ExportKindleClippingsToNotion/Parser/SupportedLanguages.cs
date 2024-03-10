@@ -11,5 +11,7 @@ public enum SupportedLanguages
    [StringValue("ENG")]
    English,
    [StringValue("DEU")]
-   German
+   German,
+   [StringValue("RUS")]
+   Russian
 }

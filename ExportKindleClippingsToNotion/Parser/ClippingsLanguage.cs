@@ -6,13 +6,15 @@ public class ClippingsLanguage()
 {
     private const string EnglishClipping = "Your Highlight on page";
     private const string GermanClipping = "Ihre Markierung bei Position";
+    private const string RussianClipping = "Ваша заметка в месте";
     private const string SpanishClipping = "La subrayado en la página";
 
     private readonly Dictionary<SupportedLanguages, string> _languageIdentifiers =
         new()
         {
             { SupportedLanguages.English, EnglishClipping },
-            { SupportedLanguages.German, GermanClipping }
+            { SupportedLanguages.German, GermanClipping },
+            { SupportedLanguages.Russian, RussianClipping }
         };
 
     public SupportedLanguages Determine(string clipping)
