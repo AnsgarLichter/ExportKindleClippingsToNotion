@@ -64,15 +64,6 @@ public class ClippingsLanguageTest
 
         Assert.Equal(SupportedLanguages.German, determinedLanguage);
     }
-    
-    [Fact]
-    public void ReturnsRussian()
-    {
-        var clippingsLanguage = new ClippingsLanguage();
-        var determinedLanguage = clippingsLanguage.Determine(RussianClipping);
-
-        Assert.Equal(SupportedLanguages.Russian, determinedLanguage);
-    }
 
     [Theory]
     [ClassData(typeof(RussianClippings))]
