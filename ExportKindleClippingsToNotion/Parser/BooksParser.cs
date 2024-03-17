@@ -12,11 +12,6 @@ public class BooksParser(IBookMetadataFetcher metadataFetcher, IClippingsParser 
 
     public async Task<List<Book>> ParseAsync(IEnumerable<string> clippings)
     {
-        return await ParseBooksAsync(clippings);
-    }
-
-    private async Task<List<Book>> ParseBooksAsync(IEnumerable<string> clippings)
-    {
         var books = new List<Book>();
         var parsedClippings = new List<Clipping>();
 

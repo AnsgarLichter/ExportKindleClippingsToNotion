@@ -15,12 +15,12 @@ public class ClippingsLanguageTest
                                           """;
 
     public const string GermanClipping = """
-                                          Robert C. Martin (Clean Code A Handbook of Agile Software Craftsmanship-Prentice Hall (2008))
-                                          - Ihre Markierung bei Position 1138-1138 | Hinzugefügt am Samstag, 3. Juli 2021 17:52:09
+                                         Robert C. Martin (Clean Code A Handbook of Agile Software Craftsmanship-Prentice Hall (2008))
+                                         - Ihre Markierung bei Position 1138-1138 | Hinzugefügt am Samstag, 3. Juli 2021 17:52:09
 
-                                          you first look at the method, the meanings of the variables are opaque.
-                                          ==========
-                                          """;
+                                         you first look at the method, the meanings of the variables are opaque.
+                                         ==========
+                                         """;
 
     public const string RussianClipping = """
                                           Долгая прогулка (Стивен Кинг)
@@ -64,14 +64,14 @@ public class ClippingsLanguageTest
 
         Assert.Equal(SupportedLanguages.German, determinedLanguage);
     }
-    
-    [Fact]
-    public void ReturnsRussian()
+
+    [Theory]
+    [ClassData(typeof(RussianClippings))]
+    public void ReturnsRussian(string clipping)
     {
         var clippingsLanguage = new ClippingsLanguage();
-        var determinedLanguage = clippingsLanguage.Determine(RussianClipping);
 
-        Assert.Equal(SupportedLanguages.Russian, determinedLanguage);
+        Assert.Equal(SupportedLanguages.Russian, clippingsLanguage.Determine(clipping));
     }
 
     [Theory]
@@ -106,6 +106,35 @@ public class UnsupportedLanguages : IEnumerable<object[]>
     {
         yield return new object[] { ClippingsLanguageTest.SpanishClipping };
         yield return new object[] { ClippingsLanguageTest.UnknownClipping };
+    }
+
+    System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();
+}
+
+public class RussianClippings : IEnumerable<object[]>
+{
+    public IEnumerator<object[]> GetEnumerator()
+    {
+        yield return new object[]
+        {
+            """
+            Долгая прогулка (Стивен Кинг)
+            – Ваша заметка в месте 5685 | Добавлено: среда, 28 февраля 2024 г. в 10:07:53
+
+            Говорит Бейкер, один из идущих
+            ==========
+            """
+        };
+        yield return new object[]
+        {
+            """
+            К востоку от Эдема (Джон Стейнбек)
+            – Ваш выделенный отрывок на странице 6 | Место 53–55 | Добавлено: воскресенье, 3 марта 2024 г. в 18:48:36
+
+            Салинас-Вэлли расположен в Северной Калифорнии и представляет собой длинную узкую полоску равнины между двумя цепями гор, посреди которой бежит, извиваясь
+            ==========
+            """
+        };
     }
 
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => GetEnumerator();

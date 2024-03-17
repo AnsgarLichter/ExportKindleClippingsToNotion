@@ -36,11 +36,18 @@ try
     var exporter = new Exporter(client);
 
     var metadataFetcher = new GoogleBooksClient(new BooksService());
-    var clippingsParser = new ClippingsParserGerman();
-    var booksParser = new BooksParser(metadataFetcher, clippingsParser);
-
+    var booksParserFactory = new BooksParserFactory(metadataFetcher);
+    var clippingsLanguage = new ClippingsLanguage();
+    var clippingsParserFactory = new ClippingsParserFactory();
+    
     var exportKindleClippingsToNotion =
-        new ExportKindleClippingsToNotion.ExportKindleClippingsToNotion(importer, booksParser, exporter);
+        new ExportKindleClippingsToNotion.ExportKindleClippingsToNotion(
+            importer,
+            booksParserFactory,
+            exporter,
+            clippingsLanguage,
+            clippingsParserFactory
+        );
     await exportKindleClippingsToNotion.ExecuteAsync(options.PathToClippings);
 }
 catch (Exception exception)
