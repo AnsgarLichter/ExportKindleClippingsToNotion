@@ -2,12 +2,12 @@
 
 namespace ExportKindleClippingsToNotion.Parser;
 
-public class ClippingsLanguage()
+public class ClippingsLanguage() : IClippingsLanguage
 {
-    private const string EnglishClipping = "Your Highlight on page";
-    private const string GermanClipping = "Ihre Markierung bei Position";
-    private const string RussianClipping = "Ваша заметка в месте";
-    private const string SpanishClipping = "La subrayado en la página";
+    private const string EnglishClipping = "Your Highlight";
+    private const string GermanClipping = "Ihre Markierung";
+    private const string RussianClipping = "Ваш";
+    private const string SpanishClipping = "La subrayado";
 
     private readonly Dictionary<SupportedLanguages, string> _languageIdentifiers =
         new()
