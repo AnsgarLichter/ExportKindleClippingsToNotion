@@ -23,6 +23,14 @@ public class ClippingsParserFactoryTest
         
         Assert.IsType<ClippingsParserGerman>(factory.GetByLanguage(SupportedLanguages.German));
     }
+    
+    [Fact]
+    public void ReturnsRussianParserForRussianLanguage()
+    {
+        var factory = new ClippingsParserFactory();
+        
+        Assert.IsType<ClippingsParserRussian>(factory.GetByLanguage(SupportedLanguages.Russian));
+    }
 
     [Fact]
     public void ThrowsExceptionForUnsupportedLanguage()

@@ -1,14 +1,22 @@
 ﻿namespace ExportKindleClippingsToNotion.Parser;
 
-public class ClippingsParserFactory
+public class ClippingsParserFactory : IClippingsParserFactory
 {
     public IClippingsParser GetByLanguage(SupportedLanguages languages)
     {
-        return languages switch
+        switch (languages)
         {
-            SupportedLanguages.English => new ClippingsParserEnglish(),
-            SupportedLanguages.German => new ClippingsParserGerman(),
-            _ => throw new ArgumentOutOfRangeException(nameof(languages), languages, null)
-        };
+            case SupportedLanguages.English:
+                Console.WriteLine("Determined English language");
+                return new ClippingsParserEnglish();
+            case SupportedLanguages.German:
+                Console.WriteLine("Determined German language");
+                return new ClippingsParserGerman();
+            case SupportedLanguages.Russian:
+                Console.WriteLine("Determined Russian language");
+                return new ClippingsParserRussian();
+            default:
+                throw new ArgumentOutOfRangeException(nameof(languages), languages, null);
+        }
     }
 }
